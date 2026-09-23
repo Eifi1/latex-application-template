@@ -1,0 +1,372 @@
+%=========================================================================
+%  THEME 2 — "SIDEBAR"
+%
+%  Zweispaltig: getönte Seitenspalte über die volle Seitenhöhe, grosses
+%  Portrait, Schlagwort-Chips. Warme Sandfläche statt schwarzem Balken,
+%  Source Sans Pro als etwas schmalere, laufruhige Textschrift.
+%  Für HR-Screening gedacht: alles Faktische steht links, die Nachweise
+%  rechts.
+%=========================================================================
+
+\usepackage[left=1.3cm, right=1.3cm, top=1.15cm, bottom=1.25cm,
+            headheight=13pt, headsep=10pt, footskip=0.8cm]{geometry}
+
+\input{templates/themes/_common.tex}
+
+%-------------------------------------------------------------------------
+%  Farben
+%-------------------------------------------------------------------------
+
+\definecolor{ink}{HTML}{2A2724}      % Fliesstext
+\definecolor{accent}{HTML}{8A4B2A}   % Rost — Sektionen, Daten, Chips
+\definecolor{muted}{HTML}{6E6862}    % Sekundärangaben
+\definecolor{tint}{HTML}{F4F1EB}     % Sandfläche der Seitenspalte
+\definecolor{rule}{HTML}{DED8CE}     % Haarlinien
+
+\colorlet{headercolor}{ink}
+\colorlet{linecolor}{accent}
+
+%-------------------------------------------------------------------------
+%  Schrift — Source Sans Pro
+%-------------------------------------------------------------------------
+
+\setmainfont{SourceSansPro}[
+    Extension      = .otf,
+    UprightFont    = *-Regular,
+    BoldFont       = *-Semibold,
+    ItalicFont     = *-RegularIt,
+    BoldItalicFont = *-SemiboldIt,
+    Ligatures      = TeX,
+]
+\setsansfont{SourceSansPro}[
+    Extension = .otf, UprightFont = *-Regular, BoldFont = *-Semibold,
+    ItalicFont = *-RegularIt, Ligatures = TeX]
+\newfontfamily\displayfont{SourceSansPro}[
+    Extension = .otf, UprightFont = *-Semibold, BoldFont = *-Bold,
+    Ligatures = TeX]
+\newfontfamily\mediumfont{SourceSansPro}[
+    Extension = .otf, UprightFont = *-Semibold, BoldFont = *-Bold,
+    Ligatures = TeX]
+
+\makeatletter
+\renewcommand\normalsize{\@setfontsize\normalsize{9.4}{13}}
+\makeatother
+\AtBeginDocument{\normalsize\color{ink}}
+
+\newcommand{\namefont}{\displayfont\fontsize{27pt}{27pt}\selectfont
+    \addfontfeature{LetterSpace=-1.5}}
+\newcommand{\rolelabelfont}{\fontsize{11pt}{13pt}\selectfont
+    \addfontfeature{LetterSpace=8}}
+\newcommand{\metafont}{\fontsize{8.4pt}{11.5pt}\selectfont}
+\newcommand{\datefont}{\mediumfont\fontsize{8.6pt}{11pt}\selectfont}
+\newcommand{\rolefont}{\displayfont\fontsize{11pt}{13.5pt}\selectfont}
+\newcommand{\orgfont}{\fontsize{9.4pt}{12pt}\selectfont}
+\newcommand{\notefont}{\fontsize{8.8pt}{11.5pt}\selectfont\itshape}
+\newcommand{\tagfont}{\fontsize{8pt}{8pt}\selectfont}
+\newcommand{\lead}[1]{{\mediumfont#1}}
+
+\newcommand{\vtopsafe}{\leavevmode}
+
+%-------------------------------------------------------------------------
+%  Spaltenraster
+%
+%  Einziger Stellknopf ist \setsidebarwidth. Inhaltsspalte, Sandfläche und
+%  Portraitgrösse leiten sich daraus ab, damit die Bedingung
+%
+%      Seitenspalte + Steg + Inhaltsspalte = \textwidth
+%
+%  nicht verletzt werden kann. paracol prüft sie nicht: Eine von Hand
+%  falsch gesetzte Spaltenbreite erzeugt keinen Fehler, sondern eine
+%  stillschweigend überlaufende Seite.
+%
+%  Andere Breite wählen — im Vorspann der Bewerbung, nach \input des Themes:
+%
+%      \setsidebarwidth{4.9cm}
+%
+%  Untergrenze rund 4,5 cm: In der Kontaktzeile steht die E-Mail-Adresse
+%  als nicht trennbarer Block (bei \metafont 111,9 pt) neben der 0,42 cm
+%  breiten Icon-Spalte. Darunter ragt sie aus der Seitenspalte heraus.
+%  Je schmaler die Spalte, desto zerrissener wird ausserdem das Kurzprofil.
+%-------------------------------------------------------------------------
+
+\setlength{\columnsep}{1.5cm}          % Steg, geht in die Rechnung ein
+
+% Die Sandfläche beginnt am Papierrand, nicht am Satzspiegel: Sie läuft
+% links in den Anschnitt und endet \bandbleed hinter der Seitenspalte,
+% also ungefähr in der Mitte des Stegs. Der linke Seitenrand wird aus der
+% geometry-Einstellung berechnet, damit geänderte Ränder nicht von Hand
+% nachgezogen werden müssen.
+\newlength{\bandbleed}\setlength{\bandbleed}{0.65cm}
+
+% Luft zwischen Portrait und Spaltenkante, je Seite.
+\newlength{\photoinset}\setlength{\photoinset}{0.2cm}
+
+\newlength{\sidebarwidth}
+\newlength{\contentwidth}
+\newlength{\bandwidth}
+\newlength{\photodiameter}
+
+\newcommand{\setsidebarwidth}[1]{%
+    \setlength{\sidebarwidth}{#1}%
+    \setlength{\contentwidth}{\dimexpr\textwidth-\columnsep-\sidebarwidth\relax}%
+    \setlength{\bandwidth}{\dimexpr 1in+\hoffset+\oddsidemargin
+                                   +\sidebarwidth+\bandbleed\relax}%
+    \setlength{\photodiameter}{\dimexpr\sidebarwidth-2\photoinset\relax}%
+    \setcolumnwidth{\sidebarwidth, \contentwidth}%
+}
+
+\setsidebarwidth{5.6cm}
+
+\columncolor{ink}[0]
+\columncolor{ink}[1]
+
+%-------------------------------------------------------------------------
+%  Sektionen
+%-------------------------------------------------------------------------
+
+% Seitenspalte: kleine Marke mit kurzem Strich darunter
+\newcommand{\sbsection}[1]{%
+    \par\addvspace{13pt}%
+    {\mediumfont\fontsize{8.6pt}{8.6pt}\selectfont
+     \addfontfeature{LetterSpace=15}\color{accent}\MakeUppercase{#1}}%
+    \par\vspace{4pt}{\color{accent}\rule{1.1cm}{1.1pt}}\par\vspace{6pt}%
+}
+
+% Hauptspalte: Marke mit durchgehender Haarlinie
+\newcommand{\cvsection}[1]{%
+    \par\addvspace{14pt}%
+    \Needspace*{5\baselineskip}% keine Überschrift allein am Seitenfuss
+    {\mediumfont\fontsize{9.5pt}{9.5pt}\selectfont
+     \addfontfeature{LetterSpace=15}\color{accent}\MakeUppercase{#1}}%
+    \par\vspace{4pt}{\color{rule}\rule{\linewidth}{0.6pt}}\par\addvspace{7pt}%
+}
+
+% Fakten-Zeile in der Hauptspalte: Marke links, Inhalt rechts
+\newcommand{\cvfactwide}[2]{%
+    \noindent
+    \begin{minipage}[t]{2.4cm}\raggedright\vtopsafe\datefont\color{accent}\strut#1\end{minipage}%
+    \hspace{0.4cm}%
+    \begin{minipage}[t]{\dimexpr\linewidth-2.8cm\relax}\bodyflow\strut#2\end{minipage}%
+    \par\vspace{4pt}%
+}
+
+%-------------------------------------------------------------------------
+%  Einträge in der Hauptspalte
+%-------------------------------------------------------------------------
+
+\newenvironment{cvexperience}{}{\par\addvspace{2pt}}
+
+\newcommand{\cvrole}[4]{%
+    \par\addvspace{9pt}\Needspace*{7\baselineskip}\noindent
+    \begin{minipage}[t]{\dimexpr\linewidth-3.0cm\relax}%
+        \vtopsafe\raggedright\nohyph\rolefont\strut#1\end{minipage}%
+    \hfill
+    \begin{minipage}[t]{2.9cm}%
+        \raggedleft\vtopsafe\datefont\color{accent}\strut#4\end{minipage}%
+    \par\vspace{1.5pt}%
+    \cvorgline{#2}{#3}%
+    % \nobreak vor dem Leim: sonst ist genau diese Stelle -- zwischen
+    % Stationskopf und Aufzählung -- ein zulässiger Seitenumbruch, und der
+    % Kopf bliebe allein am Fuss der Seite zurück.
+    \par\nobreak\vspace{3pt}%
+}
+
+\newcommand{\cvnote}[1]{\vspace{-1pt}{\bodyflow\notefont\color{muted}#1\par}\nobreak\vspace{1pt}}
+
+\newcommand{\cvplain}[3]{%
+    \par\addvspace{7pt}\bodyflow\noindent
+    {\nohyph\rolefont\fontsize{9.8pt}{12pt}\selectfont\strut#1}%
+    \,{\metafont\color{muted}\textbullet}\,{\datefont\color{accent}#2}\par
+    \vspace{1pt}#3\par%
+}
+
+% beginpenalty/midpenalty verbieten den Seitenumbruch vor und innerhalb der
+% Liste. Zusammen mit dem \Needspace* in \cvrole bleibt damit jede Station
+% als Block zusammen, statt einen einzelnen Punkt auf die Folgeseite zu
+% schieben. Preis: Passt eine Station nicht mehr aufs Blatt, wandert sie
+% ganz auf die nächste Seite und hinterlässt unten Weissraum.
+\newenvironment{cvbullets}{%
+    \begin{itemize}[beginpenalty=10000, midpenalty=10000,
+                    leftmargin=12pt, labelwidth=6pt, labelsep=6pt, labelindent=0pt,
+                    itemindent=0pt, topsep=2.5pt, itemsep=3pt,
+                    parsep=0pt, partopsep=0pt, align=left,
+                    label={\color{accent}\textbullet}]
+        \bodyflow
+    }{\end{itemize}}
+
+%-------------------------------------------------------------------------
+%  Fakten-Zeilen in der Seitenspalte — Marke oben, Inhalt darunter
+%-------------------------------------------------------------------------
+
+\newcommand{\cvfact}[2]{%
+    {\datefont\color{ink}#1}\par\vspace{0.5pt}%
+    {\bodyflow\fontsize{8.8pt}{11.8pt}\selectfont\color{muted}#2}%
+    \par\vspace{6pt}%
+}
+
+%-------------------------------------------------------------------------
+%  Schlagwort-Chips
+%-------------------------------------------------------------------------
+
+% Höhe und Tiefe des Textfelds werden fest vorgegeben, statt sie vom
+% Inhalt bestimmen zu lassen: sonst wird "Excel" (ohne Unterlänge)
+% flacher als "Zahlungsverkehr" und die Plaketten sind ungleich hoch.
+\newlength{\tagheight}\setlength{\tagheight}{6pt}
+\newlength{\tagdepth}\setlength{\tagdepth}{2pt}
+\newlength{\tagpad}\setlength{\tagpad}{2.2pt}
+
+\newcommand{\cvtag}[1]{%
+    \begin{tikzpicture}[baseline=(tg.base)]
+        \node[rectangle, rounded corners=2.5pt, draw=accent!35, fill=accent!7,
+              inner xsep=5pt, inner ysep=\tagpad,
+              text height=\tagheight, text depth=\tagdepth,
+              text=ink, font=\tagfont] (tg) {#1};
+    \end{tikzpicture}%
+    \hspace{3pt}%
+}
+
+% Zeilenabstand der Chip-Zeilen: fest gesetzt, damit die Reihen gleich
+% weit auseinanderliegen und nicht von der höchsten Plakette der Zeile
+% abhängen. Muss grösser sein als Plakettenhöhe + Tiefe.
+\newcommand{\tagblock}[1]{%
+    % \raggedright statt des \RaggedRight aus \bodyflow: ragged2e erlaubt am
+    % rechten Rand nur 2\,em Dehnung, damit ist ein Umbruch zwischen zwei
+    % Plaketten unzulaessig, sobald die Restluecke groesser waere -- TeX laesst
+    % die Zeile dann lieber ueberlaufen. \raggedright dehnt unbegrenzt.
+    {\bodyflow\raggedright\setlength{\baselineskip}{\dimexpr\tagheight+\tagdepth+2\tagpad+3.6pt\relax}%
+     #1\par}%
+}
+
+%-------------------------------------------------------------------------
+%  Kopf, Kontakt, Portrait
+%-------------------------------------------------------------------------
+
+\newcommand{\sidebarphoto}{%
+    \noindent\hspace*{\photoinset}\photobox{\photodiameter}{7pt}\par\vspace{2pt}%
+}
+
+\newcommand{\contactrow}[2]{%
+    \noindent\begin{minipage}[t]{0.42cm}\vtopsafe\metafont\color{accent}\strut#1\end{minipage}%
+    \begin{minipage}[t]{\dimexpr\linewidth-0.42cm\relax}%
+        \vtopsafe\bodyflow\metafont\color{ink}\strut#2\end{minipage}%
+    \par\vspace{3.5pt}%
+}
+
+\newcommand{\contactblock}{%
+    \contactrow{\icoloc}{\CVaddress}%
+    \contactrow{\icophone}{\CVphone}%
+    \contactrow{\icomail}{\href{mailto:\CVmail}{\CVmail}}%
+    \contactrow{\CVlinkicon}{\cvlink}%
+    \contactrow{\icocal}{\CVbirth}%
+    \contactrow{\icoheart}{\CVcivil}%
+}
+
+\newcommand{\makenamehead}{%
+    {\namefont\nohyph\color{ink}\CVname}\par\vspace{4pt}
+    {\rolelabelfont\color{accent}\CVrole}\par\vspace{9pt}
+    {\color{rule}\rule{\linewidth}{0.6pt}}\par\vspace{8pt}
+    \tagblock{\ContentTags}\vspace{2pt}
+}
+
+%-------------------------------------------------------------------------
+%  Seitenstil — Sandfläche über die volle Seitenhöhe
+%-------------------------------------------------------------------------
+
+\fancypagestyle{cvstyle}{%
+    \fancyhf{}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+    \fancyhead[L]{%
+        \begin{tikzpicture}[remember picture, overlay]
+            \fill[tint] (current page.north west)
+                rectangle ($(current page.south west)+(\bandwidth,0)$);
+            % Auf Folgeseiten trägt die Seitenspalte die Kopfzeile
+            \ifnum\value{page}>1
+                \node[anchor=north west, align=left, inner sep=0]
+                    at ($(current page.north west)+(1.3cm,-1.45cm)$)
+                    {\mediumfont\fontsize{9.5pt}{12pt}\selectfont\color{ink}\CVname\\[2pt]
+                     \metafont\color{muted}\LblCV~~\textbullet~~\LblPage\ \thepage};
+            \fi
+        \end{tikzpicture}}
+    \fancyhead[R]{}
+}
+\fancypagestyle{letterpage}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}}
+
+%-------------------------------------------------------------------------
+%  Briefkopf
+%-------------------------------------------------------------------------
+
+\newcommand{\makeletterhead}{%
+    \pagestyle{letterpage}\thispagestyle{letterpage}%
+    \setlength{\parskip}{7.5pt}%
+    \begin{tikzpicture}[remember picture, overlay]
+        \fill[tint] ($(current page.north west)$)
+            rectangle ($(current page.north east)+(0,-3.5cm)$);
+    \end{tikzpicture}%
+    \vspace*{0.45cm}
+    \noindent
+    % 5.6cm ist hier NICHT die Seitenspalte, sondern die Breite, die der
+    % rechtsbündige Kontaktblock des Briefkopfs beansprucht. Unabhängig
+    % von \sidebarwidth — nicht mitziehen.
+    \begin{minipage}[b]{\dimexpr\linewidth-5.6cm\relax}
+        {\displayfont\fontsize{21pt}{21pt}\selectfont
+         \addfontfeature{LetterSpace=-1}\color{ink}\CVname}\par\vspace{4pt}
+        {\fontsize{9.5pt}{11pt}\selectfont
+         \addfontfeature{LetterSpace=6}\color{accent}\CVrole}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}[b]{5.4cm}
+        \raggedleft\metafont\color{muted}\setlength{\parskip}{0pt}
+        \CVaddress\par\CVphone\par\href{mailto:\CVmail}{\CVmail}
+    \end{minipage}
+    \par\vspace{9pt}
+    \noindent{\color{accent}\rule{\linewidth}{1.2pt}}
+    \par\vspace{14pt}
+}
+
+\newcommand{\lettersection}[1]{%
+    \par\addvspace{11pt}%
+    \noindent{\mediumfont\fontsize{9.5pt}{9.5pt}\selectfont
+        \addfontfeature{LetterSpace=13}\color{accent}\MakeUppercase{#1}}%
+    \par\vspace{4pt}\noindent{\color{rule}\rule{\linewidth}{0.6pt}}\par\vspace{6pt}%
+}
+
+%-------------------------------------------------------------------------
+%  Rumpf des Lebenslaufs
+%-------------------------------------------------------------------------
+
+\newcommand{\makecvbody}{%
+    \pagestyle{cvstyle}\thispagestyle{cvstyle}
+    \begin{paracol}{2}
+
+    %--- Seitenspalte -----------------------------------------------------
+    \sidebarphoto
+    \sbsection{\LblContact}
+    \contactblock
+    \sbsection{\LblProfile}
+    {\bodyflow\fontsize{8.8pt}{12pt}\selectfont\ContentSummary}
+    \sbsection{\LblLanguages}
+    \ContentLanguages
+
+    %--- Hauptspalte ------------------------------------------------------
+    \switchcolumn
+
+    \makenamehead
+
+    \cvsection{\LblExperience}
+    \ContentExperience
+
+    \cvsection{\LblEducation}
+    \ContentEducation
+
+    \cvsection{\LblFurther}
+    \ContentFurther
+
+    % Kompetenzen ausgeschrieben — im breiten Satzspiegel als Marke/Inhalt-Zeilen
+    \cvsection{\LblSkills}
+    {\let\cvfact\cvfactwide\ContentSkills}
+
+    {\let\cvfact\cvfactwide\cvextrasections}
+
+    \end{paracol}
+}

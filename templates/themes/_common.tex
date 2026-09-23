@@ -1,0 +1,186 @@
+%=========================================================================
+%  GEMEINSAME BASIS — Pakete, Icons, Hilfsmakros.
+%  Enthält bewusst KEINE Gestaltung. Alles Gestalterische (Farben, Schrift,
+%  Raster, Abstände) liegt im jeweiligen Theme unter templates/themes/.
+%=========================================================================
+
+\usepackage[british, ngerman]{babel}
+\usepackage{etoolbox}
+\usepackage{xcolor}
+\usepackage{fontspec}
+\usepackage[final]{microtype}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage[fixed]{fontawesome5}
+\usepackage{paracol}
+\usepackage{setspace}
+\usepackage{ragged2e}
+\usepackage{needspace}
+
+
+%-------------------------------------------------------------------------
+%  Sprache
+%
+%  \cvlanguage ist ein babel-Sprachname und wird VOR dem Theme gesetzt --
+%  in applications/<app>/meta.tex, denn die Sprache gehoert zur Ziel-
+%  bewerbung und nicht zur Gestaltung. Voreinstellung ngerman: alle
+%  bestehenden Bewerbungen bauen unveraendert, ohne dass ihre meta.tex
+%  etwas davon wissen muss. Die babel-Optionen oben laden alle drei
+%  Sprachen; die letzte ist die Hauptsprache, \selectlanguage schaltet um.
+%  Fuer Englisch "british" verwenden, nicht "english": babel warnt vor der
+%  mehrdeutigen Option, und british liefert das europaeische Datumsformat.
+%-------------------------------------------------------------------------
+
+\providecommand{\cvlanguage}{ngerman}
+
+%-------------------------------------------------------------------------
+%  Beschriftungen der Abschnitte -- Voreinstellung Deutsch.
+%  Eine uebersetzte Inhaltsdatei (templates/themes/cv-content-en.tex)
+%  setzt sie per \renewcommand um; kein Theme enthaelt mehr festen Text.
+%-------------------------------------------------------------------------
+
+%  Briefdatum. Voreinstellung ist babels \today. Die englische Inhalts-
+%  datei setzt es um: babels british schreibt "16th September 2026", und
+%  die Ordnungszahl ist im Geschaeftsbrief unueblich.
+\providecommand{\lettertoday}{\today}
+
+\providecommand{\LblSkills}{Kompetenzen}
+\providecommand{\LblExperience}{Berufserfahrung}
+\providecommand{\LblEducation}{Ausbildung}
+\providecommand{\LblFurther}{Weiterbildung}
+\providecommand{\LblLanguages}{Sprachen}
+\providecommand{\LblContact}{Kontakt}
+\providecommand{\LblProfile}{Profil}
+\providecommand{\LblCV}{Lebenslauf}
+\providecommand{\LblPage}{Seite}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\emergencystretch=2em
+
+%-------------------------------------------------------------------------
+%  Typografische Hygiene
+%-------------------------------------------------------------------------
+
+% Trennung in Überschriften/Titeln unterdrücken — verhindert Unfälle wie
+% "MUSTERMANN TECH-|NIK AG" quer über den Zeilenumbruch.
+\newcommand{\nohyph}{\hyphenpenalty=10000\exhyphenpenalty=10000\hbadness=10000}
+
+% Eigennamen, die nie getrennt werden sollen. \hyphenation traegt die
+% Ausnahmen nur in die gerade aktive Sprache ein -- deshalb als Makro und
+% nach \selectlanguage noch einmal aufgerufen.
+\newcommand{\cvhyphenexceptions}{%
+    % Eigene Firmen-, Orts- und Produktnamen hier ergänzen. Ohne Bindestrich
+    % = nie trennen, mit Bindestrich = nur an dieser Fuge trennen.
+    \hyphenation{ANSYS FastAPI Team-center Work-bench}}
+\cvhyphenexceptions
+% \frenchspacing NACH \selectlanguage: babel setzt den Satzabstand je
+% Sprache, und british stellt den weiten englischen Abstand nach dem Punkt
+% ein. Der faellt im Brief als Loecher auf und passt nicht zu den deutschen
+% Dokumenten, die ngerman ohnehin auf frenchspacing stellt -- fuer Deutsch
+% ist die Zeile daher wirkungslos.
+\AtBeginDocument{\expandafter\selectlanguage\expandafter{\cvlanguage}%
+    \cvhyphenexceptions\frenchspacing}
+
+% Flatterrand statt Blocksatz: in schmalen Spalten erzeugt Blocksatz
+% Trennungskaskaden und Löcher. \RaggedRight erlaubt Trennung noch,
+% hält den Grauwert aber ruhig.
+\newcommand{\bodyflow}{\RaggedRight\hyphenpenalty=200}
+
+%-------------------------------------------------------------------------
+%  Icons
+%-------------------------------------------------------------------------
+
+\newcommand{\icoloc}{\faMapMarker*}
+\newcommand{\icophone}{\faPhone*}
+\newcommand{\icomail}{\faEnvelope}
+\newcommand{\icolinked}{\faLinkedin}
+\newcommand{\icocal}{\faBirthdayCake}
+\newcommand{\icoheart}{\faHeart}
+\newcommand{\icocar}{\faCar}
+
+%-------------------------------------------------------------------------
+%  Sechster Kontaktplatz — z.B. LinkedIn, GitHub oder der Führerschein.
+%  Die Inhaltsdatei setzt Symbol, Text und optional eine URL; ist die URL
+%  leer, steht der Text ohne Verlinkung da.
+%-------------------------------------------------------------------------
+\providecommand{\CVlinkicon}{\icolinked}
+\providecommand{\CVlinktext}{}
+\providecommand{\CVlinkurl}{}
+\newcommand{\cvlink}{\ifdefempty{\CVlinkurl}{\CVlinktext}{\href{\CVlinkurl}{\CVlinktext}}}
+
+%-------------------------------------------------------------------------
+%  Haken für Abschnitte, die nur eine Person braucht (z.B. Referenzen).
+%  Wird am Ende des Lebenslaufs ausgeführt; die Inhaltsdatei füllt ihn.
+%-------------------------------------------------------------------------
+\providecommand{\cvextrasections}{}
+
+%-------------------------------------------------------------------------
+%  Bild-Helfer
+%-------------------------------------------------------------------------
+% Quadratischer Ausschnitt mit abgerundeten Ecken.
+%   #1 Kantenlänge des Rahmens   #2 Eckenradius
+% Zwei Stellschrauben kommen aus der Inhaltsdatei, weil sie zum Foto
+% gehören und nicht zum Theme — beide relativ zur Kantenlänge, damit
+% derselbe Wert in allen Themes stimmt, egal wie gross der Rahmen ist:
+%   \CVphotozoom   Bildbreite als Vielfaches der Kantenlänge (1 = bündig)
+%   \CVphotoshift  Motivversatz; negativ schiebt das Bild nach unten,
+%                  das Gesicht rutscht also von oben in die Mitte
+\providecommand{\CVphotozoom}{1}
+\providecommand{\CVphotoshift}{0}
+\newcommand{\photobox}[2]{%
+    \begin{tikzpicture}
+        \pgfmathsetlengthmacro{\pbhalf}{0.5*#1}
+        \pgfmathsetlengthmacro{\pbwide}{\CVphotozoom*#1}
+        \pgfmathsetlengthmacro{\pbshift}{\CVphotoshift*#1}
+        \clip[rounded corners=#2] (-\pbhalf,-\pbhalf) rectangle (\pbhalf,\pbhalf);
+        \node[anchor=center, inner sep=0] at (0,\pbshift)
+            {\includegraphics[width=\pbwide]{\CVphoto}};
+    \end{tikzpicture}%
+}
+
+%-------------------------------------------------------------------------
+%  Zweiter Zeitraum derselben Rolle beim selben Arbeitgeber.
+%
+%  Wer eine Funktion zweimal innehatte, bekommt EINEN Eintrag mit zwei
+%  Zeiträumen — nicht zwei Einträge mit identischer Aufgabenliste. Der
+%  jüngere Zeitraum steht oben und bestimmt, wo der Eintrag im Lebenslauf
+%  einsortiert wird; der ältere folgt als zweite Zeile in der Datumsspalte.
+%
+%      \cvrole{Immobilien-Bewirtschafterin}{Ing.~Bau~AG}{Vaduz}%
+%             {2022 -- 2023\cvalso{2018 -- 2019}}
+%
+%  Bewusst ohne "und": die Datumsspalte des Akzent-Themes ist 2,2 cm breit,
+%  "und 2018 -- 2019" bricht dort auf drei Zeilen um. Dass es zwei Einsätze
+%  sind, sagt ohnehin die Zeile unter dem Rollentitel.
+%-------------------------------------------------------------------------
+\newcommand{\cvalso}[1]{\\ #1}
+
+%-------------------------------------------------------------------------
+%  Organisationszeile "Firma · Ort" — beide Teile optional, damit Einträge
+%  ohne Arbeitgeber (Familienphase, Auszeit) keinen leeren Trenner zeigen.
+%  Nutzt \orgfont, \metafont und die Farbe muted aus dem jeweiligen Theme.
+%-------------------------------------------------------------------------
+\newcommand{\cvorgline}[2]{%
+    % Keine Silbentrennung: Firmen- und Ortsnamen gehören nicht zerlegt.
+    % "Zwickau, Deutsch-|land" liest sich wie ein Setzfehler. Umbrüche an
+    % den Wortzwischenräumen bleiben möglich.
+    \nohyph
+    \ifblank{#1}{%
+        \ifblank{#2}{}{{\metafont\color{muted}#2}}%
+    }{%
+        {\orgfont#1}%
+        \ifblank{#2}{}{\,{\metafont\color{muted}\textbullet}\,{\metafont\color{muted}#2}}%
+    }%
+}
+
+%-------------------------------------------------------------------------
+%  Links — klickbar, ohne Rahmen
+%-------------------------------------------------------------------------
+\usepackage[hidelinks, bookmarks=false, unicode]{hyperref}
+\urlstyle{same}

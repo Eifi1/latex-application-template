@@ -1,0 +1,135 @@
+%=========================================================================
+%  INHALT — layoutneutral.
+%
+%  Hier steht ausschliesslich, WAS im Lebenslauf steht. WIE es aussieht,
+%  entscheidet das Theme: die hier verwendeten Makros (\cvsection, \cvrole,
+%  cvbullets, \cvfact, \cvtag, \lead) definiert jedes Theme selbst.
+%  Ein Theme-Wechsel ändert damit kein einziges Zeichen Inhalt.
+%
+%  Alles unten ist Blindtext einer fiktiven Person -- durch die eigenen
+%  Angaben ersetzen. Die englische Fassung (cv-content-en.tex) hat dieselbe
+%  Struktur; wer nur auf Deutsch schreibt, kann sie ignorieren.
+%=========================================================================
+
+%--- Stammdaten ----------------------------------------------------------
+
+\newcommand{\CVname}{Max Muster}
+% Titel unter dem Namen -- kommt pro Bewerbung aus meta.tex (\cvjobtitle)
+\newcommand{\CVrole}{\cvjobtitle}
+\newcommand{\CVphoto}{images/platzhalter.png}
+% Bildausschnitt: \CVphotozoom = Bildbreite / Rahmenbreite (1 = bündig),
+% \CVphotoshift verschiebt das Motiv vertikal (negativ = nach unten).
+\renewcommand{\CVphotozoom}{1}
+\renewcommand{\CVphotoshift}{0}
+\newcommand{\CVaddress}{Musterstrasse 1, 8000 Zürich}
+% Ort für die Datumszeile der Briefe
+\newcommand{\CVcity}{Zürich}
+\newcommand{\CVphone}{+41 79 000 00 00}
+\newcommand{\CVmail}{max.muster@example.com}
+\newcommand{\CVbirth}{01.01.1990}
+\newcommand{\CVcivil}{ledig}
+% Sechster Kontaktplatz: Symbol, Text und optional eine URL
+\renewcommand{\CVlinkicon}{\icolinked}
+\renewcommand{\CVlinktext}{max-muster}
+\renewcommand{\CVlinkurl}{https://www.linkedin.com/in/max-muster/}
+
+%--- Kurzprofil ----------------------------------------------------------
+
+\newcommand{\ContentSummary}{%
+Ingenieur mit acht Jahren Erfahrung in Entwicklung und Erprobung mechatronischer
+Baugruppen -- von der Auslegung über den Versuch bis zur Auswertung. Lorem ipsum dolor
+sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore.%
+}
+
+%--- Berufserfahrung -----------------------------------------------------
+
+\newcommand{\ContentExperience}{%
+\begin{cvexperience}
+
+\cvrole{Entwicklungsingenieur}{Muster Technik AG}{Zürich, Schweiz}{03/2020 -- heute}
+\cvnote{Optionale Notizzeile, z.B. frühere Funktion im selben Unternehmen}
+\begin{cvbullets}
+    \item \lead{Auslegung:} Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+    sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat
+    \item \lead{Versuch:} At vero eos et accusam et justo duo dolores et ea rebum --
+    Stet clita kasd gubergren, no sea takimata sanctus est
+    \item \lead{Auswertung:} Automatisierte Auswertung mit Python; lorem ipsum dolor
+    sit amet, consetetur sadipscing elitr
+\end{cvbullets}
+
+\cvrole{Versuchsingenieur}{Beispiel GmbH}{Stuttgart, Deutschland}{10/2016 -- 02/2020}
+\begin{cvbullets}
+    \item \lead{Prüfstände:} Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+    sed diam nonumy eirmod tempor invidunt ut labore
+    \item \lead{Messtechnik:} Kraft-, Weg- und Temperaturmesstechnik; at vero eos et
+    accusam et justo duo dolores
+\end{cvbullets}
+
+% Zwei Zeiträume derselben Rolle beim selben Arbeitgeber: ein Eintrag.
+\cvrole{Werkstudent}{Institut für Beispielforschung}{München, Deutschland}%
+       {2015 -- 2016\cvalso{2013 -- 2014}}
+\cvnote{Unterstützung in Forschungsprojekten zu Leichtbaustrukturen}
+
+\end{cvexperience}%
+}
+
+%--- Ausbildung ----------------------------------------------------------
+
+\newcommand{\ContentEducation}{%
+\begin{cvexperience}
+
+\cvrole{Master of Science, Maschinenbau}{Technische Universität Musterstadt}{Musterstadt, Deutschland}{10/2014 -- 09/2016}
+\cvnote{Schwerpunkt: Konstruktion und Simulation}
+\begin{cvbullets}
+    \item \lead{Masterarbeit:} Lorem ipsum dolor sit amet, consetetur sadipscing elitr
+\end{cvbullets}
+
+\cvrole{Bachelor of Science, Maschinenbau}{Technische Universität Musterstadt}{Musterstadt, Deutschland}{10/2011 -- 09/2014}
+
+\end{cvexperience}%
+}
+
+%--- Weiterbildung -------------------------------------------------------
+
+\newcommand{\ContentFurther}{%
+\begin{cvexperience}
+\cvplain{Python für Ingenieure}{2021}{Lorem ipsum dolor sit amet, consetetur
+sadipscing elitr}
+\cvplain{Projektmanagement}{2019}{At vero eos et accusam et justo duo dolores}
+\end{cvexperience}%
+}
+
+%--- Kompetenzen ---------------------------------------------------------
+%  Bewusst ohne Prozentbalken: eine Skala ohne Bezugsgrösse ist für den
+%  Leser nicht überprüfbar und wird von Parsern als Leerraum gelesen.
+%  Stattdessen Nennung dessen, was tatsächlich im Einsatz ist.
+
+\newcommand{\ContentSkills}{%
+\cvfact{Engineering}{FE-Simulation (ANSYS Workbench), CAD, Messtechnik}
+\cvfact{Software}{Python, SQL, Git}
+\cvfact{Systeme}{Siemens Teamcenter (PLM), SAP}
+\cvfact{Methodik}{Versuchsplanung, FMEA, Reviews}%
+}
+
+% Kurzform als Schlagwort-Chips (nur das Sidebar-Theme zeigt sie)
+\newcommand{\ContentTags}{%
+\cvtag{Python}\cvtag{SQL}\cvtag{ANSYS}\cvtag{CAD}\cvtag{Messtechnik}%
+\cvtag{Teamcenter}\cvtag{FMEA}%
+}
+
+%--- Sprachen ------------------------------------------------------------
+
+\newcommand{\ContentLanguages}{%
+\cvfact{Deutsch}{Muttersprache (C2)}
+\cvfact{Englisch}{Verhandlungssicher (C1)}
+\cvfact{Französisch}{Grundkenntnisse (A2)}%
+}
+
+%--- Zusatzabschnitte ----------------------------------------------------
+%  \cvextrasections führt jedes Theme am Ende des Lebenslaufs aus -- für
+%  Abschnitte wie Referenzen oder Publikationen. Leer lassen = kein Abschnitt.
+
+\renewcommand{\cvextrasections}{%
+    \cvsection{Referenzen}
+    \cvfact{}{Auf Anfrage}%
+}

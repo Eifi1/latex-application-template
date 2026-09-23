@@ -1,0 +1,314 @@
+%=========================================================================
+%  THEME 3 — "AKZENT"
+%
+%  Dunkles Kopfband über die volle Seitenbreite, darunter einspaltig mit
+%  echter Zeitachse: durchgehende Schiene, Punkt je Station, Datum links.
+%  Archivo als Display-Schrift, Inter im Text. Der kontraststärkste der
+%  drei Entwürfe — auffällig, ohne dekorativ zu werden.
+%=========================================================================
+
+\usepackage[left=1.6cm, right=1.6cm, top=1.3cm, bottom=1.4cm,
+            headheight=14pt, headsep=10pt, footskip=0.9cm]{geometry}
+
+\input{templates/themes/_common.tex}
+
+%-------------------------------------------------------------------------
+%  Farben
+%-------------------------------------------------------------------------
+
+\definecolor{band}{HTML}{152230}       % Kopfband
+\definecolor{ink}{HTML}{1B2229}        % Fliesstext
+\definecolor{accent}{HTML}{E0A458}     % Amber — nur auf dunklem Grund
+\definecolor{accentdark}{HTML}{A2691F}  % Amber, kontraststark auf Weiss
+\definecolor{muted}{HTML}{6B7680}
+\definecolor{onband}{HTML}{C7D2DC}     % Sekundärtext im Kopfband
+\definecolor{rail}{HTML}{DFE4E8}       % Zeitachse
+\definecolor{rule}{HTML}{DDE2E6}
+
+\colorlet{headercolor}{band}
+\colorlet{linecolor}{accentdark}
+
+%-------------------------------------------------------------------------
+%  Schrift — Archivo als Display, Inter im Text
+%-------------------------------------------------------------------------
+
+\setmainfont{Inter}[
+    Extension      = .otf,
+    UprightFont    = *-Regular,
+    BoldFont       = *-SemiBold,
+    ItalicFont     = *-Italic,
+    BoldItalicFont = *-SemiBoldItalic,
+    Numbers        = Monospaced,
+    Ligatures      = TeX,
+]
+\setsansfont{Inter}[
+    Extension = .otf, UprightFont = *-Regular, BoldFont = *-SemiBold,
+    ItalicFont = *-Italic, Numbers = Monospaced, Ligatures = TeX]
+\newfontfamily\mediumfont{Inter}[
+    Extension = .otf, UprightFont = *-Medium, BoldFont = *-SemiBold,
+    Numbers = Monospaced, Ligatures = TeX]
+\newfontfamily\displayfont{Archivo}[
+    Path = fonts/, Extension = .ttf,
+    UprightFont = *-SemiBold, BoldFont = *-SemiBold, Ligatures = TeX]
+
+\makeatletter
+\renewcommand\normalsize{\@setfontsize\normalsize{9.2}{12.9}}
+\makeatother
+\AtBeginDocument{\normalsize\color{ink}}
+
+\newcommand{\namefont}{\displayfont\fontsize{29pt}{29pt}\selectfont
+    \addfontfeature{LetterSpace=-1.5}}
+\newcommand{\rolelabelfont}{\mediumfont\fontsize{10pt}{12pt}\selectfont
+    \addfontfeature{LetterSpace=20}}
+\newcommand{\metafont}{\fontsize{8.3pt}{11pt}\selectfont}
+\newcommand{\datefont}{\mediumfont\fontsize{8.6pt}{11pt}\selectfont}
+\newcommand{\rolefont}{\displayfont\fontsize{11pt}{13.5pt}\selectfont}
+\newcommand{\orgfont}{\mediumfont\fontsize{9.4pt}{12pt}\selectfont}
+\newcommand{\notefont}{\fontsize{8.7pt}{11.5pt}\selectfont\itshape}
+\newcommand{\lead}[1]{{\mediumfont#1}}
+
+\newcommand{\vtopsafe}{\leavevmode}
+
+% Geometrie der Zeitachse
+\newlength{\railx}\setlength{\railx}{4.0cm}   % Abstand Papierkante -> Achse
+\newlength{\railtop}\setlength{\railtop}{7.1cm} % Achsbeginn auf Seite 1
+
+%-------------------------------------------------------------------------
+%  Sektionen
+%-------------------------------------------------------------------------
+
+\newcommand{\cvsection}[1]{%
+    \par\addvspace{12pt}%
+    \Needspace*{5\baselineskip}%
+    % Überschrift und Linie sitzen bündig zur Inhaltsspalte (3,0 cm), damit
+    % die Zeitachse frei bleibt. Über die volle Breite gesetzt würden beide
+    % die Achse kreuzen — das liest sich als Fehler, nicht als Gestaltung.
+    \noindent\hspace*{3.0cm}{\mediumfont\fontsize{9.5pt}{9.5pt}\selectfont
+        \addfontfeature{LetterSpace=18}\color{ink}\MakeUppercase{#1}}%
+    \par\vspace{5pt}%
+    \noindent\hspace*{3.0cm}{\color{accentdark}\rule{1.5cm}{1.4pt}}%
+    {\color{rule}\rule{\dimexpr\linewidth-4.5cm\relax}{0.5pt}}%
+    \par\addvspace{7pt}%
+}
+
+%-------------------------------------------------------------------------
+%  Zeitachse — Datum links der Schiene, Punkt auf der Schiene,
+%  Inhalt rechts. Als Liste, damit Seitenumbrüche sauber laufen.
+%-------------------------------------------------------------------------
+
+\newenvironment{cvexperience}{%
+    \begin{list}{}{%
+        \setlength{\leftmargin}{3.0cm}%
+        \setlength{\labelwidth}{2.2cm}%
+        \setlength{\labelsep}{0.8cm}%
+        \setlength{\itemindent}{0pt}%
+        \setlength{\listparindent}{0pt}%
+        \setlength{\rightmargin}{0pt}%
+        \setlength{\topsep}{0pt}%
+        \setlength{\partopsep}{0pt}%
+        \setlength{\parsep}{0pt}%
+        \setlength{\itemsep}{8pt}%
+        \renewcommand{\makelabel}[1]{%
+            \parbox[t]{\labelwidth}{\raggedleft\vtopsafe
+                \datefont\color{muted}\strut##1}\hfill}%
+    }%
+}{\end{list}\par\addvspace{2pt}}
+
+% Punkt auf der Schiene, auf Höhe der ersten Titelzeile.
+% \leavevmode ist zwingend: ohne es landet die \llap-Box im vertikalen
+% Modus, also vor dem \leftskip der Liste — und damit am linken Satzrand
+% statt auf der Achse.
+\newcommand{\railmark}{%
+    \leavevmode
+    \llap{\raisebox{0.24em}{%
+        \begin{tikzpicture}
+            \fill[white] (0,0) circle (4.2pt);
+            \fill[accentdark] (0,0) circle (2.6pt);
+        \end{tikzpicture}}%
+        \hspace{0.45cm}}%
+}
+
+\newcommand{\cvrole}[4]{%
+    \Needspace*{5\baselineskip}% Station nicht als Waise an den Seitenfuss
+    \item[#4]\railmark
+    {\nohyph\rolefont\strut#1}\par\vspace{2pt}%
+    \cvorgline{#2}{#3}%
+    \par\vspace{3pt}%
+}
+
+\newcommand{\cvnote}[1]{\vspace{-1pt}{\bodyflow\notefont\color{muted}#1\par}\vspace{1pt}}
+
+\newcommand{\cvplain}[3]{%
+    \item[#2]\railmark\bodyflow
+    {\nohyph\orgfont\strut#1}\,{\metafont\color{muted}\textbullet}\,#3\par%
+}
+
+\newenvironment{cvbullets}{%
+    \begin{itemize}[leftmargin=13pt, labelwidth=7pt, labelsep=6pt, labelindent=0pt,
+                    itemindent=0pt, topsep=3pt, itemsep=3pt,
+                    parsep=0pt, partopsep=0pt, align=left,
+                    label={\color{accentdark}\textendash}]
+        \bodyflow
+    }{\end{itemize}}
+
+%-------------------------------------------------------------------------
+%  Fakten-Zeilen — ohne Punkt, sonst gleiche Schiene
+%-------------------------------------------------------------------------
+
+\newcommand{\cvfact}[2]{%
+    \noindent
+    \begin{minipage}[t]{2.2cm}\raggedleft\vtopsafe
+        \datefont\color{muted}\strut#1\end{minipage}%
+    \hspace{0.8cm}%
+    \begin{minipage}[t]{\dimexpr\linewidth-3.0cm\relax}\bodyflow\strut#2\end{minipage}%
+    \par\vspace{4pt}%
+}
+
+\newcommand{\cvtag}[1]{#1\quad}
+
+%-------------------------------------------------------------------------
+%  Kopfband
+%-------------------------------------------------------------------------
+
+% Kontaktblock im Kopfband. Bewusst eine Tabelle und keine Minipages mit
+% festen Spaltenanteilen: die Spalten richten sich nach der längsten
+% Angabe. Sonst muss bei jeder neuen Adresse, Nummer oder E-Mail neu
+% gerechnet werden, und eine längere Adresse bricht nicht um.
+\newcommand{\bandcell}[2]{{\color{accent}#1}~~#2}
+
+% Zwei Spalten, drei Zeilen: links die Erreichbarkeit, rechts die Angaben
+% zur Person. Drei Spalten nebeneinander passen nicht neben das Portrait —
+% die längste Zeile (Adresse) und die E-Mail liegen so untereinander und
+% teilen sich dieselbe Spaltenbreite.
+\newcommand{\bandcontacts}{%
+    {\metafont\color{onband}\renewcommand{\arraystretch}{1.35}%
+    \begin{tabular}{@{}l@{\hspace{0.9cm}}l@{}}
+        \bandcell{\icoloc}{\CVaddress} &
+        \bandcell{\icocal}{\CVbirth} \\
+        \bandcell{\icophone}{\CVphone} &
+        \bandcell{\icoheart}{\CVcivil} \\
+        \bandcell{\icomail}{\href{mailto:\CVmail}{\color{onband}\CVmail}} &
+        \bandcell{\CVlinkicon}{\cvlink} \\
+    \end{tabular}}%
+}
+
+\newcommand{\makecvheader}{%
+    % Vollflächiges Band, blutet über die Papierkante hinaus
+    \begin{tikzpicture}[remember picture, overlay]
+        \fill[band] ($(current page.north west)$)
+            rectangle ($(current page.north east)+(0,-6.1cm)$);
+    \end{tikzpicture}%
+    \vspace*{0.75cm}%
+    \noindent
+    \begin{minipage}[c]{\dimexpr\linewidth-4.4cm\relax}
+        {\namefont\nohyph\color{white}\CVname}\par\vspace{7pt}
+        {\rolelabelfont\color{accent}\MakeUppercase{\CVrole}}\par\vspace{13pt}
+        {\color{onband!45}\rule{\linewidth}{0.5pt}}\par\vspace{7pt}
+        \bandcontacts
+    \end{minipage}%
+    \hfill
+    \begin{minipage}[c]{3.9cm}
+        \raggedleft\photobox{3.9cm}{6pt}
+    \end{minipage}%
+    \par\vspace{0.95cm}%
+    % Kurzprofil
+    \noindent
+    \begin{minipage}[t]{2.2cm}\raggedleft\vtopsafe
+        \datefont\color{muted}\strut Kurzprofil\end{minipage}%
+    \hspace{0.8cm}%
+    \begin{minipage}[t]{\dimexpr\linewidth-3.0cm\relax}%
+        \vtopsafe\bodyflow\fontsize{9.4pt}{13.2pt}\selectfont\strut\ContentSummary
+    \end{minipage}\par
+}
+
+%-------------------------------------------------------------------------
+%  Seitenstil — Zeitachse im Hintergrund, schmales Band ab Seite 2
+%-------------------------------------------------------------------------
+
+\fancypagestyle{cvstyle}{%
+    \fancyhf{}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+    \fancyhead[L]{%
+        \begin{tikzpicture}[remember picture, overlay]
+            \ifnum\value{page}=1
+                \draw[rail, line width=1pt]
+                    ($(current page.north west)+(\railx,-\railtop)$) --
+                    ($(current page.south west)+(\railx,1.4cm)$);
+            \else
+                \fill[band] (current page.north west)
+                    rectangle ($(current page.north east)+(0,-1.15cm)$);
+                \node[anchor=west, inner sep=0]
+                    at ($(current page.north west)+(1.6cm,-0.575cm)$)
+                    {\mediumfont\fontsize{9pt}{9pt}\selectfont\color{white}\CVname};
+                \node[anchor=east, inner sep=0]
+                    at ($(current page.north east)+(-1.6cm,-0.575cm)$)
+                    {\metafont\color{onband}\LblCV~~\textbullet~~\LblPage\ \thepage};
+                \draw[rail, line width=1pt]
+                    ($(current page.north west)+(\railx,-1.9cm)$) --
+                    ($(current page.south west)+(\railx,1.4cm)$);
+            \fi
+        \end{tikzpicture}}
+}
+\fancypagestyle{letterpage}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}}
+
+%-------------------------------------------------------------------------
+%  Briefkopf — schmales Band, damit Brief und Lebenslauf zusammengehören
+%-------------------------------------------------------------------------
+
+\newcommand{\makeletterhead}{%
+    \pagestyle{letterpage}\thispagestyle{letterpage}%
+    \setlength{\parskip}{7.5pt}%
+    \begin{tikzpicture}[remember picture, overlay]
+        \fill[band] (current page.north west)
+            rectangle ($(current page.north east)+(0,-3.2cm)$);
+    \end{tikzpicture}%
+    \vspace*{0.35cm}
+    \noindent
+    \begin{minipage}[b]{\dimexpr\linewidth-5.6cm\relax}
+        {\displayfont\fontsize{21pt}{21pt}\selectfont
+         \addfontfeature{LetterSpace=-1}\color{white}\CVname}\par\vspace{5pt}
+        {\mediumfont\fontsize{8.8pt}{11pt}\selectfont
+         \addfontfeature{LetterSpace=16}\color{accent}\MakeUppercase{\CVrole}}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}[b]{5.4cm}
+        \raggedleft\metafont\color{onband}\setlength{\parskip}{0pt}
+        \CVaddress\par\CVphone\par\href{mailto:\CVmail}{\color{onband}\CVmail}
+    \end{minipage}
+    \par\vspace{1.55cm}
+}
+
+\newcommand{\lettersection}[1]{%
+    \par\addvspace{11pt}%
+    \noindent{\mediumfont\fontsize{9.5pt}{9.5pt}\selectfont
+        \addfontfeature{LetterSpace=14}\color{ink}\MakeUppercase{#1}}%
+    \par\vspace{4pt}\noindent{\color{accentdark}\rule{1.5cm}{1.4pt}}%
+    {\color{rule}\rule{\dimexpr\linewidth-1.5cm\relax}{0.5pt}}\par\vspace{6pt}%
+}
+
+%-------------------------------------------------------------------------
+%  Rumpf des Lebenslaufs
+%-------------------------------------------------------------------------
+
+\newcommand{\makecvbody}{%
+    \pagestyle{cvstyle}\thispagestyle{cvstyle}
+    \makecvheader
+
+    \cvsection{\LblExperience}
+    \ContentExperience
+
+    \cvsection{\LblEducation}
+    \ContentEducation
+
+    \cvsection{\LblSkills}
+    \ContentSkills
+
+    \cvsection{\LblFurther}
+    \ContentFurther
+
+    \cvsection{\LblLanguages}
+    \ContentLanguages
+
+    \cvextrasections
+}

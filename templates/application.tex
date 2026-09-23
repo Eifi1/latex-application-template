@@ -1,0 +1,75 @@
+%=========================================================================
+%  BEWERBUNGSDOSSIER (Lebenslauf + Anschreiben + Motivation)
+%
+%  Gestaltung:  templates/themes/<theme>.tex
+%  Inhalt CV:   templates/themes/cv-content.tex
+%  Briefe:      templates/cover-letter.tex + motivation.tex (Arbeitskopie)
+%
+%  Bauen:
+%     make application                  aktuelle Bewerbung, Briefe aus templates/
+%     make rebuild APP=2026-01-muster-ag archivierte Bewerbung neu bauen
+%     make cv                           nur der Lebenslauf
+%     make themes                       dasselbe Dossier in allen Themes
+%=========================================================================
+
+\documentclass[10pt, a4paper]{article}
+
+%-------------------------------------------------------------------------
+%  Gestaltung — hier wechselt man das Theme.
+%  Verfügbar unter templates/themes/: kompakt | sidebar | akzent
+%  (\providecommand, damit "make themes" es von aussen setzen kann)
+%-------------------------------------------------------------------------
+
+\providecommand{\cvtheme}{kompakt}
+
+%-------------------------------------------------------------------------
+%  Zielbewerbung — Ordnername unter applications/.
+%  meta.tex liefert \cvjobtitle, \companyname, \positionname, ...
+%-------------------------------------------------------------------------
+
+\newcommand{\application}{2026-01-muster-ag}
+% Von "make rebuild APP=..." auf der Kommandozeile überschrieben
+\ifdefined\appoverride\let\application\appoverride\fi
+\input{applications/\application/meta}
+
+% Fallback für meta.tex ohne \cvjobtitle
+\providecommand{\cvjobtitle}{Entwicklungsingenieur}
+
+% Inhaltsdatei und Sprache — beide kommen aus meta.tex, weil sie zur
+% Zielbewerbung gehören und nicht zur Gestaltung. Voreinstellung ist der
+% deutsche Inhalt; eine englische Ausschreibung setzt in ihrer meta.tex
+%     \newcommand{\cvcontent}{cv-content-en}
+%     \newcommand{\cvlanguage}{british}
+\providecommand{\cvcontent}{cv-content}
+
+\input{templates/themes/\cvtheme}
+\input{templates/themes/\cvcontent}
+
+%-------------------------------------------------------------------------
+%  Briefe — normalerweise die Arbeitskopie in templates/. Mit
+%  \def\lettersfromapp{} auf der Kommandozeile kommen sie stattdessen aus
+%  dem Bewerbungsordner, sodass sich jede archivierte Bewerbung so neu
+%  bauen lässt, wie sie abgelegt wurde (siehe "make rebuild").
+%-------------------------------------------------------------------------
+
+\ifdefined\lettersfromapp
+    \newcommand{\letterdir}{applications/\application}
+\else
+    \newcommand{\letterdir}{templates}
+\fi
+
+\begin{document}
+
+\makecvbody
+
+\ifdefined\cvonly\else
+    \newpage
+    \makeletterhead
+    \input{\letterdir/cover-letter}
+
+    \newpage
+    \makeletterhead
+    \input{\letterdir/motivation}
+\fi
+
+\end{document}

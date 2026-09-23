@@ -1,0 +1,280 @@
+%=========================================================================
+%  THEME 1 — "KOMPAKT"
+%
+%  Einspaltig mit Datums-Schiene links. Entspricht dem tabellarischen
+%  Lebenslauf, wie ihn HR im DACH-Raum liest, in moderner Typografie:
+%  Inter, Haarlinien, eine Akzentfarbe, konsequenter Flatterrand.
+%  Lineare Lesereihenfolge — von Menschen und Parsern gleich gelesen.
+%=========================================================================
+
+\usepackage[left=1.7cm, right=1.7cm, top=1.25cm, bottom=1.4cm,
+            headheight=14pt, headsep=12pt, footskip=1cm]{geometry}
+
+\input{templates/themes/_common.tex}
+
+%-------------------------------------------------------------------------
+%  Farben
+%-------------------------------------------------------------------------
+
+\definecolor{ink}{HTML}{1D2429}      % Fliesstext / Titel
+\definecolor{accent}{HTML}{1F5D74}   % Petrol — Sektionen, Daten, Akzentlinien
+\definecolor{muted}{HTML}{6B7680}    % Sekundärangaben
+\definecolor{rule}{HTML}{DCE1E5}     % Haarlinien
+
+% Kompatibilität zu den bestehenden Brief-Dateien
+\colorlet{headercolor}{ink}
+\colorlet{linecolor}{accent}
+
+%-------------------------------------------------------------------------
+%  Schrift — Inter durchgehend, Ziffern tabellarisch (Jahreszahlen fluchten)
+%-------------------------------------------------------------------------
+
+\setmainfont{Inter}[
+    Extension      = .otf,
+    UprightFont    = *-Regular,
+    BoldFont       = *-SemiBold,
+    ItalicFont     = *-Italic,
+    BoldItalicFont = *-SemiBoldItalic,
+    Numbers        = Monospaced,
+    Ligatures      = TeX,
+]
+% \sffamily muss dieselbe Schrift liefern — die Briefdateien verwenden es
+\setsansfont{Inter}[
+    Extension = .otf, UprightFont = *-Regular, BoldFont = *-SemiBold,
+    ItalicFont = *-Italic, Numbers = Monospaced, Ligatures = TeX]
+\newfontfamily\displayfont{Inter}[
+    Extension = .otf, UprightFont = *-SemiBold, BoldFont = *-Bold,
+    Numbers = Monospaced, Ligatures = TeX]
+\newfontfamily\mediumfont{Inter}[
+    Extension = .otf, UprightFont = *-Medium, BoldFont = *-SemiBold,
+    Numbers = Monospaced, Ligatures = TeX]
+
+% Grundschriftgrad des Dokuments
+\makeatletter
+\renewcommand\normalsize{\@setfontsize\normalsize{9.2}{12.8}}
+\makeatother
+\AtBeginDocument{\normalsize\color{ink}}
+
+\newcommand{\namefont}{\displayfont\fontsize{25pt}{25pt}\selectfont
+    \addfontfeature{LetterSpace=-2.2}}
+\newcommand{\rolelabelfont}{\mediumfont\fontsize{9.5pt}{12pt}\selectfont
+    \addfontfeature{LetterSpace=16}}
+\newcommand{\metafont}{\fontsize{8.3pt}{11pt}\selectfont}
+\newcommand{\datefont}{\mediumfont\fontsize{8.5pt}{11pt}\selectfont}
+\newcommand{\rolefont}{\displayfont\fontsize{10.8pt}{13pt}\selectfont}
+\newcommand{\orgfont}{\mediumfont\fontsize{9.4pt}{12pt}\selectfont}
+\newcommand{\notefont}{\fontsize{8.7pt}{11.5pt}\selectfont\itshape}
+\newcommand{\lead}[1]{{\mediumfont#1}}
+
+% Grundlinien-Schutz: \color erzeugt in vertikalem Modus ein Whatsit; steht
+% es als erstes im \vtop einer [t]-Minipage, verliert die Box ihre Höhe und
+% die Zeile rutscht um die Oberlänge nach unten. \leavevmode verhindert das.
+\newcommand{\vtopsafe}{\leavevmode}
+
+% Zwischenspeicher für das Kurzprofil — siehe \makecvheader
+\newsavebox{\summarybox}
+
+%-------------------------------------------------------------------------
+%  Sektionen
+%-------------------------------------------------------------------------
+
+\newcommand{\cvsection}[1]{%
+    \par\addvspace{10pt}%
+    \noindent{\mediumfont\fontsize{9pt}{9pt}\selectfont
+        \addfontfeature{LetterSpace=18}\color{accent}\MakeUppercase{#1}}%
+    % \nointerlineskip: ohne ihn setzt TeX die Linie als eigene Zeile im
+    % vollen Grundlinienabstand, und der Abstand wird deutlich grösser als
+    % die 4pt hier. Versalien haben keine Unterlängen, der Abstand ist also exakt.
+    \par\nointerlineskip\vspace{4pt}%
+    \noindent{\color{rule}\rule{\linewidth}{0.5pt}}%
+    \par\vspace{5pt}%
+}
+
+%-------------------------------------------------------------------------
+%  Einträge — Datum in der Schiene, Inhalt rechts.
+%  Als LaTeX-Liste realisiert, damit lange Einträge sauber über
+%  Seitenumbrüche laufen; Minipages könnten das nicht.
+%-------------------------------------------------------------------------
+
+\newenvironment{cvexperience}{%
+    \begin{list}{}{%
+        \setlength{\leftmargin}{3.15cm}%
+        \setlength{\labelwidth}{2.65cm}%
+        \setlength{\labelsep}{0.5cm}%
+        \setlength{\itemindent}{0pt}%
+        \setlength{\listparindent}{0pt}%
+        \setlength{\rightmargin}{0pt}%
+        \setlength{\topsep}{0pt}%
+        \setlength{\partopsep}{0pt}%
+        \setlength{\parsep}{0pt}%
+        \setlength{\itemsep}{8pt}%
+        \renewcommand{\makelabel}[1]{%
+            \parbox[t]{\labelwidth}{\raggedright\vtopsafe
+                \datefont\color{accent}\strut##1}\hfill}%
+    }%
+}{\end{list}\par\addvspace{1pt}}
+
+\newcommand{\cvrole}[4]{%
+    \Needspace*{5\baselineskip}% Station nicht als Waise an den Seitenfuss
+    \item[#4]%
+    {\nohyph\rolefont\strut#1}\par\vspace{2pt}%
+    \cvorgline{#2}{#3}%
+    \par\vspace{2.5pt}%
+}
+
+\newcommand{\cvnote}[1]{\vspace{-1pt}{\bodyflow\notefont\color{muted}#1\par}\vspace{1pt}}
+
+\newcommand{\cvplain}[3]{%
+    \item[#2]\bodyflow
+    {\nohyph\orgfont\strut#1}\,{\metafont\color{muted}\textbullet}\,#3\par%
+}
+
+\newenvironment{cvbullets}{%
+    \begin{itemize}[leftmargin=13pt, labelwidth=7pt, labelsep=6pt, labelindent=0pt,
+                    itemindent=0pt, topsep=2.5pt, itemsep=2.5pt,
+                    parsep=0pt, partopsep=0pt, align=left,
+                    label={\color{accent}\textendash}]
+        \bodyflow
+    }{\end{itemize}}
+
+%-------------------------------------------------------------------------
+%  Fakten-Zeilen (Kompetenzen, Sprachen) — dieselbe Schiene wie die
+%  Berufserfahrung, damit das Dokument ein einziges Raster hat.
+%-------------------------------------------------------------------------
+
+\newcommand{\cvfact}[2]{%
+    \noindent
+    \begin{minipage}[t]{2.65cm}\raggedright\vtopsafe
+        \datefont\color{accent}\strut#1\end{minipage}%
+    \hspace{0.5cm}%
+    \begin{minipage}[t]{\dimexpr\linewidth-3.15cm\relax}\bodyflow\strut#2\end{minipage}%
+    \par\vspace{4pt}%
+}
+
+\newcommand{\cvtag}[1]{#1\quad}  % Chips braucht dieses Theme nicht
+
+%-------------------------------------------------------------------------
+%  Kopf des Lebenslaufs
+%-------------------------------------------------------------------------
+
+\newcommand{\cbox}[2]{%
+    \begin{minipage}[t]{0.333\linewidth}\vtopsafe\metafont\color{muted}
+        \strut#1~~#2\end{minipage}%
+}
+
+\newcommand{\contactgrid}{%
+    \noindent
+    \cbox{\icoloc}{\CVaddress}%
+    \cbox{\icophone}{\CVphone}%
+    \cbox{\icomail}{\href{mailto:\CVmail}{\CVmail}}\par\vspace{3pt}
+    \noindent
+    \cbox{\CVlinkicon}{\cvlink}%
+    \cbox{\icocal}{\CVbirth}%
+    \cbox{\icoheart}{\CVcivil}\par
+}
+
+\newcommand{\makecvheader}{%
+    \noindent
+    \begin{minipage}[b]{\dimexpr\linewidth-3.9cm\relax}
+        {\namefont\nohyph\color{ink}\CVname}\par\vspace{6pt}
+        {\rolelabelfont\color{accent}\MakeUppercase{\CVrole}}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}[b]{3.4cm}
+        \raggedleft\photobox{3.4cm}{6pt}
+    \end{minipage}
+    \par\vspace{9pt}
+    \noindent{\color{rule}\rule{\linewidth}{0.5pt}}\par\vspace{6pt}
+    \contactgrid
+    \par\vspace{9pt}
+    % Kurzprofil, links geklammert von einer Akzentlinie. Der Text wird
+    % zuerst in eine Box gesetzt, dann bekommt die Linie deren gemessene
+    % Höhe: eine fest gesetzte Länge würde je nach Textmenge über den
+    % Absatz hinausragen oder zu kurz bleiben.
+    \sbox{\summarybox}{%
+        \begin{minipage}[t]{\dimexpr\linewidth-20pt\relax}
+            \vtopsafe\bodyflow\fontsize{9.3pt}{13pt}\selectfont
+            \strut\ContentSummary\strut
+        \end{minipage}}%
+    \noindent
+    {\color{accent}\rule[-\dp\summarybox]{1.6pt}%
+        {\dimexpr\ht\summarybox+\dp\summarybox\relax}}%
+    \hspace{9pt}\usebox{\summarybox}\par
+    % Groesser als die 10pt, die \cvsection selbst setzt: der Profilkasten
+    % endet auf einem \strut und damit ohne Unterlaenge, wodurch der gleiche
+    % Zahlenwert hier optisch enger wirkt als zwischen zwei Sektionen.
+    % \addvspace nimmt das Maximum, deshalb muss der Wert oberhalb von 10pt
+    % liegen, um ueberhaupt zu greifen.
+    \vspace{17pt}
+}
+
+%-------------------------------------------------------------------------
+%  Seitenstil — dezente Kopfzeile ab Seite 2
+%-------------------------------------------------------------------------
+
+\fancypagestyle{cvstyle}{%
+    \fancyhf{}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+    \fancyhead[L]{\metafont\color{muted}\CVname~~\textbullet~~\LblCV}
+    \fancyhead[R]{\metafont\color{muted}\LblPage\ \thepage}
+    \fancyhead[C]{}
+}
+\fancypagestyle{cvfirst}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}}
+
+%-------------------------------------------------------------------------
+%  Briefkopf (Anschreiben / Motivationsschreiben)
+%-------------------------------------------------------------------------
+
+\newcommand{\makeletterhead}{%
+    \pagestyle{cvfirst}\thispagestyle{cvfirst}%
+    \setlength{\parskip}{7.5pt}% Brieftext: Absätze durch Weissraum getrennt
+    \noindent
+    \begin{minipage}[b]{\dimexpr\linewidth-5.4cm\relax}
+        {\displayfont\fontsize{19pt}{19pt}\selectfont
+         \addfontfeature{LetterSpace=-1.5}\color{ink}\CVname}\par\vspace{5pt}
+        {\mediumfont\fontsize{8.8pt}{11pt}\selectfont
+         \addfontfeature{LetterSpace=14}\color{accent}\MakeUppercase{\CVrole}}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}[b]{5.2cm}
+        \raggedleft\metafont\color{muted}\setlength{\parskip}{0pt}
+        \CVaddress\par\CVphone\par\href{mailto:\CVmail}{\CVmail}
+    \end{minipage}
+    \par\vspace{8pt}
+    \noindent{\color{accent}\rule{\linewidth}{1pt}}
+    \par\vspace{12pt}
+}
+
+\newcommand{\lettersection}[1]{%
+    \par\addvspace{11pt}%
+    \noindent{\mediumfont\fontsize{9.5pt}{9.5pt}\selectfont
+        \addfontfeature{LetterSpace=14}\color{accent}\MakeUppercase{#1}}%
+    \par\vspace{4pt}\noindent{\color{rule}\rule{\linewidth}{0.5pt}}\par\vspace{6pt}%
+}
+
+%-------------------------------------------------------------------------
+%  Rumpf des Lebenslaufs
+%-------------------------------------------------------------------------
+
+\newcommand{\makecvbody}{%
+    \pagestyle{cvstyle}\thispagestyle{cvfirst}
+    \makecvheader
+
+    \cvsection{\LblSkills}
+    \ContentSkills
+
+    \cvsection{\LblExperience}
+    \ContentExperience
+
+    \cvsection{\LblEducation}
+    \ContentEducation
+
+    \cvsection{\LblFurther}
+    \ContentFurther
+
+    \cvsection{\LblLanguages}
+    \ContentLanguages
+
+    \cvextrasections
+}

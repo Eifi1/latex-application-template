@@ -1,0 +1,141 @@
+%=========================================================================
+%  INHALT (englisch) — layoutneutral.
+%
+%  Englische Fassung von cv-content.tex. Gleiche Makros, gleiche Struktur,
+%  gleiche Reihenfolge; nur die Sprache und die Abschnittsbeschriftungen
+%  unterscheiden sich. Wird über \cvcontent aus applications/<app>/meta.tex
+%  gewählt, zusammen mit \cvlanguage.
+%
+%  Aktualisierungen am deutschen Inhalt gehören hier gespiegelt.
+%=========================================================================
+
+%--- Abschnittsbeschriftungen -------------------------------------------
+%  Die Themes setzen keinen festen Text; die Voreinstellungen stehen auf
+%  Deutsch in themes/_common.tex und werden hier übersetzt.
+
+\renewcommand{\LblSkills}{Skills}
+\renewcommand{\LblExperience}{Professional Experience}
+\renewcommand{\LblEducation}{Education}
+\renewcommand{\LblFurther}{Continuing Education}
+\renewcommand{\LblLanguages}{Languages}
+\renewcommand{\LblContact}{Contact}
+\renewcommand{\LblProfile}{Profile}
+\renewcommand{\LblCV}{Curriculum Vitae}
+\renewcommand{\LblPage}{Page}
+
+% Datum ohne Ordnungszahl: "16 September 2026" statt babels "16th September 2026".
+\renewcommand{\lettertoday}{\number\day\space
+    \ifcase\month\or January\or February\or March\or April\or May\or June\or
+    July\or August\or September\or October\or November\or December\fi
+    \space\number\year}
+
+%--- Stammdaten ----------------------------------------------------------
+
+\newcommand{\CVname}{Max Muster}
+\newcommand{\CVrole}{\cvjobtitle}
+\newcommand{\CVphoto}{images/platzhalter.png}
+\renewcommand{\CVphotozoom}{1}
+\renewcommand{\CVphotoshift}{0}
+\newcommand{\CVaddress}{Musterstrasse 1, 8000 Zurich}
+\newcommand{\CVcity}{Zurich}
+\newcommand{\CVphone}{+41 79 000 00 00}
+\newcommand{\CVmail}{max.muster@example.com}
+\newcommand{\CVbirth}{01/01/1990}
+\newcommand{\CVcivil}{single}
+\renewcommand{\CVlinkicon}{\icolinked}
+\renewcommand{\CVlinktext}{max-muster}
+\renewcommand{\CVlinkurl}{https://www.linkedin.com/in/max-muster/}
+
+%--- Kurzprofil ----------------------------------------------------------
+
+\newcommand{\ContentSummary}{%
+Engineer with eight years of experience in developing and testing mechatronic
+assemblies -- from design through testing to evaluation. Lorem ipsum dolor sit amet,
+consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore.%
+}
+
+%--- Berufserfahrung -----------------------------------------------------
+
+\newcommand{\ContentExperience}{%
+\begin{cvexperience}
+
+\cvrole{Development Engineer}{Muster Technik AG}{Zurich, Switzerland}{03/2020 -- present}
+\cvnote{Optional note line, e.g. an earlier role at the same employer}
+\begin{cvbullets}
+    \item \lead{Design:} Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+    sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat
+    \item \lead{Testing:} At vero eos et accusam et justo duo dolores et ea rebum --
+    Stet clita kasd gubergren, no sea takimata sanctus est
+    \item \lead{Evaluation:} Automated evaluation in Python; lorem ipsum dolor
+    sit amet, consetetur sadipscing elitr
+\end{cvbullets}
+
+\cvrole{Test Engineer}{Beispiel GmbH}{Stuttgart, Germany}{10/2016 -- 02/2020}
+\begin{cvbullets}
+    \item \lead{Test rigs:} Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+    sed diam nonumy eirmod tempor invidunt ut labore
+    \item \lead{Instrumentation:} Force, displacement and temperature measurement;
+    at vero eos et accusam et justo duo dolores
+\end{cvbullets}
+
+\cvrole{Student Assistant}{Institute for Example Research}{Munich, Germany}%
+       {2015 -- 2016\cvalso{2013 -- 2014}}
+\cvnote{Support in research projects on lightweight structures}
+
+\end{cvexperience}%
+}
+
+%--- Ausbildung ----------------------------------------------------------
+
+\newcommand{\ContentEducation}{%
+\begin{cvexperience}
+
+\cvrole{Master of Science, Mechanical Engineering}{Technical University of Musterstadt}{Musterstadt, Germany}{10/2014 -- 09/2016}
+\cvnote{Focus: design and simulation}
+\begin{cvbullets}
+    \item \lead{Master's thesis:} Lorem ipsum dolor sit amet, consetetur sadipscing elitr
+\end{cvbullets}
+
+\cvrole{Bachelor of Science, Mechanical Engineering}{Technical University of Musterstadt}{Musterstadt, Germany}{10/2011 -- 09/2014}
+
+\end{cvexperience}%
+}
+
+%--- Weiterbildung -------------------------------------------------------
+
+\newcommand{\ContentFurther}{%
+\begin{cvexperience}
+\cvplain{Python for Engineers}{2021}{Lorem ipsum dolor sit amet, consetetur
+sadipscing elitr}
+\cvplain{Project Management}{2019}{At vero eos et accusam et justo duo dolores}
+\end{cvexperience}%
+}
+
+%--- Kompetenzen ---------------------------------------------------------
+
+\newcommand{\ContentSkills}{%
+\cvfact{Engineering}{FE simulation (ANSYS Workbench), CAD, instrumentation}
+\cvfact{Software}{Python, SQL, Git}
+\cvfact{Systems}{Siemens Teamcenter (PLM), SAP}
+\cvfact{Methods}{Design of experiments, FMEA, reviews}%
+}
+
+\newcommand{\ContentTags}{%
+\cvtag{Python}\cvtag{SQL}\cvtag{ANSYS}\cvtag{CAD}\cvtag{Instrumentation}%
+\cvtag{Teamcenter}\cvtag{FMEA}%
+}
+
+%--- Sprachen ------------------------------------------------------------
+
+\newcommand{\ContentLanguages}{%
+\cvfact{German}{Native (C2)}
+\cvfact{English}{Fluent (C1)}
+\cvfact{French}{Basic (A2)}%
+}
+
+%--- Zusatzabschnitte ----------------------------------------------------
+
+\renewcommand{\cvextrasections}{%
+    \cvsection{References}
+    \cvfact{}{Available on request}%
+}
