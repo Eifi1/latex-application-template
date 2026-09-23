@@ -1,0 +1,53 @@
+%=========================================================================
+%  FEEDBACK NACH DEM GESPRÄCH — optional.
+%
+%  Ein kurzes Dokument, das man nach einem Erstgespräch nachreichen kann.
+%  Nutzt denselben Briefkopf und dasselbe Theme wie das Dossier.
+%     make feedback
+%=========================================================================
+
+\documentclass[10pt, a4paper]{article}
+
+\providecommand{\cvtheme}{kompakt}
+
+\newcommand{\application}{2026-01-muster-ag}
+\ifdefined\appoverride\let\application\appoverride\fi
+\input{applications/\application/meta}
+\providecommand{\cvjobtitle}{Entwicklungsingenieur}
+\providecommand{\cvcontent}{cv-content}
+
+\input{templates/themes/\cvtheme}
+\input{templates/themes/\cvcontent}
+
+\setlength{\parskip}{3pt}
+
+\begin{document}
+
+\makeletterhead
+
+\noindent
+{\color{headercolor}\sffamily\bfseries\large Feedback Erstgespräch -- \companyname, 1.~Januar 2026}
+
+\lettersection{Gesamteindruck}
+
+\noindent
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+
+\lettersection{Was mich überzeugt hat}
+
+\noindent
+At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+\lettersection{Was ich einbringe}
+
+\noindent
+Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis.
+
+\lettersection{Offene Punkte für das nächste Gespräch}
+
+\noindent
+\textbf{Thema 1:} Lorem ipsum dolor sit amet, consetetur sadipscing elitr.
+
+\textbf{Thema 2:} At vero eos et accusam et justo duo dolores et ea rebum.
+
+\end{document}

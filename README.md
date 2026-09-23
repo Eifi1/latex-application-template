@@ -12,7 +12,7 @@ Alle Inhalte sind Blindtext der fiktiven Person „Max Muster“. Sie werden dur
 | `sidebar` | zweispaltig, getönte Seitenleiste mit Kontakt, Profil und Sprachen, Schlagwort-Chips |
 | `akzent` | dunkles Kopfband mit Foto, Zeitachse |
 
-Mit `make themes` entsteht das aktuelle Dossier in allen drei Layouts unter `build/theme-*.pdf` zum Vergleichen.
+Fertig gebaute Beispiele liegen in [`vorschau/`](vorschau/) — dasselbe Blindtext-Dossier in jedem Layout. Mit `make themes` entsteht das eigene Dossier in allen drei Layouts unter `build/theme-*.pdf` zum Vergleichen.
 
 ## Struktur
 
@@ -32,6 +32,7 @@ Mit `make themes` entsteht das aktuelle Dossier in allen drei Layouts unter `bui
 │       └── akzent.tex
 ├── fonts/                         # Archivo (SIL Open Font License)
 ├── images/platzhalter.png         # Foto — durch eigenes ersetzen
+├── vorschau/                      # Beispiel-PDFs der drei Layouts
 └── applications/
     └── YYYY-MM-firma/             # ein Ordner pro Bewerbung
         ├── meta.tex               # Stelle, Firma, Adresse, Empfänger, Sprache
@@ -65,9 +66,9 @@ Mit `make themes` entsteht das aktuelle Dossier in allen drei Layouts unter `bui
    ```
 3. `templates/cover-letter.tex` und `templates/motivation.tex` für die Stelle neu schreiben.
 4. `make application` baut das PDF und legt es zusammen mit den Briefen im Bewerbungsordner ab.
-5. Beim Versand committen. So hält git fest, welcher Lebenslauf-Stand verschickt wurde.
+5. Beim Versand committen, inklusive `application.pdf`.
 
-PDFs sind in `.gitignore` ausgeschlossen, weil sie sich aus den `.tex`-Dateien jederzeit neu bauen lassen.
+Die PDFs werden bewusst mitversioniert: `make rebuild` baut mit dem *aktuellen* Lebenslauf, das Ergebnis weicht also vom verschickten Dossier ab, sobald sich `cv-content.tex` seither geändert hat. Das abgelegte PDF ist der Beleg, was tatsächlich verschickt wurde.
 
 ## Make-Befehle
 

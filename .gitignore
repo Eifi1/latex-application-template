@@ -37,5 +37,3 @@ Thumbs.db
 *.swo
 *~
 .vscode/
-# Erzeugte PDFs — entstehen aus den .tex-Dateien (make application / rebuild)
-*.pdf
