@@ -1,0 +1,35 @@
+%=========================================================================
+%  MASTER-LEBENSLAUF — zeigt jeden Baustein der Inhaltsdatei.
+%
+%  Treiber für "make cv-master". Setzt \cvmaster, womit die Inhaltsdatei
+%  alle optionalen Bausteine zeigt (Schlüsselliste im Kopf von
+%  templates/themes/cv-content.tex). Dieser Lebenslauf wird nicht verschickt:
+%  Er ist das vollständige Inventar, aus dem je Stelle in der meta.tex
+%  mit \cvshow und \cvhide reduziert wird.
+%
+%      xelatex "\input{templates/cv-master.tex}"                   deutsch
+%      xelatex "\def\cvmasteren{}\input{templates/cv-master.tex}"  englisch
+%      xelatex "\def\cvtheme{sidebar}\input{templates/cv-master.tex}"
+%=========================================================================
+
+\documentclass[10pt, a4paper]{article}
+
+\def\cvmaster{}
+\ifdefined\cvtheme\else\def\cvtheme{kompakt}\fi
+
+% Kein Bewerbungsordner: Titel und Sprache stehen hier.
+\ifdefined\cvmasteren
+    \def\cvcontent{cv-content-en}
+    \def\cvlanguage{british}
+    \def\cvjobtitle{Development Engineer}
+\else
+    \def\cvcontent{cv-content}
+    \def\cvjobtitle{Entwicklungsingenieur}
+\fi
+
+\input{templates/themes/\cvtheme}
+\input{templates/themes/\cvcontent}
+
+\begin{document}
+\makecvbody
+\end{document}

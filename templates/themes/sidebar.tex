@@ -63,7 +63,7 @@
 \newcommand{\orgfont}{\fontsize{9.4pt}{12pt}\selectfont}
 \newcommand{\notefont}{\fontsize{8.8pt}{11.5pt}\selectfont\itshape}
 \newcommand{\tagfont}{\fontsize{8pt}{8pt}\selectfont}
-\newcommand{\lead}[1]{{\mediumfont#1}}
+\newcommand{\lead}[1]{{\mediumfont#1\cvrealspace}}
 
 \newcommand{\vtopsafe}{\leavevmode}
 
@@ -133,11 +133,13 @@
 }
 
 % Hauptspalte: Marke mit durchgehender Haarlinie
-\newcommand{\cvsection}[1]{%
+% Optionales Argument wie in kompakt.tex (Platzbedarf in Zeilen;
+% hier bleibt die bisherige Voreinstellung von 5 Zeilen.
+\newcommand{\cvsection}[2][5]{%
     \par\addvspace{14pt}%
-    \Needspace*{5\baselineskip}% keine Überschrift allein am Seitenfuss
+    \Needspace*{#1\baselineskip}% keine Überschrift allein am Seitenfuss
     {\mediumfont\fontsize{9.5pt}{9.5pt}\selectfont
-     \addfontfeature{LetterSpace=15}\color{accent}\MakeUppercase{#1}}%
+     \addfontfeature{LetterSpace=15}\color{accent}\MakeUppercase{#2}}%
     \par\vspace{4pt}{\color{rule}\rule{\linewidth}{0.6pt}}\par\addvspace{7pt}%
 }
 
@@ -190,7 +192,7 @@
                     leftmargin=12pt, labelwidth=6pt, labelsep=6pt, labelindent=0pt,
                     itemindent=0pt, topsep=2.5pt, itemsep=3pt,
                     parsep=0pt, partopsep=0pt, align=left,
-                    label={\color{accent}\textbullet}]
+                    label={\color{accent}\textbullet\cvrealspace}]
         \bodyflow
     }{\end{itemize}}
 
@@ -242,7 +244,7 @@
 %-------------------------------------------------------------------------
 
 \newcommand{\sidebarphoto}{%
-    \noindent\hspace*{\photoinset}\photobox{\photodiameter}{7pt}\par\vspace{2pt}%
+    \noindent\hspace*{\photoinset}\cvstd{photo}{\photobox{\photodiameter}{7pt}}\par\vspace{2pt}%
 }
 
 \newcommand{\contactrow}[2]{%
@@ -259,6 +261,9 @@
     \contactrow{\CVlinkicon}{\cvlink}%
     \contactrow{\icocal}{\CVbirth}%
     \contactrow{\icoheart}{\CVcivil}%
+    \ifdefempty{\CVnationality}{}{\contactrow{\icoflag}{\CVnationality}}%
+    \ifdefempty{\CVpermit}{}{\contactrow{\icopermit}{\CVpermit}}%
+    \ifdefempty{\CVgithubtext}{}{\contactrow{\icogithub}{\cvgithub}}%
 }
 
 \newcommand{\makenamehead}{%
@@ -321,7 +326,8 @@
     \end{minipage}
     \par\vspace{9pt}
     \noindent{\color{accent}\rule{\linewidth}{1.2pt}}
-    \par\vspace{14pt}
+    \par\vspace{14pt}%
+    \letterbodyfont
 }
 
 \newcommand{\lettersection}[1]{%
@@ -344,7 +350,9 @@
     \sbsection{\LblContact}
     \contactblock
     \sbsection{\LblProfile}
-    {\bodyflow\fontsize{8.8pt}{12pt}\selectfont\ContentSummary}
+    % \par in der Gruppe: sonst endet der Absatz erst nach der Gruppe, und
+    % die Trennstrafe aus \bodyflow greift nicht.
+    {\bodyflow\fontsize{8.8pt}{12pt}\selectfont\ContentSummary\par}
     \sbsection{\LblLanguages}
     \ContentLanguages
 
@@ -356,11 +364,14 @@
     \cvsection{\LblExperience}
     \ContentExperience
 
+    % Open Source & Projekte (nur, wenn die Inhaltsdatei den Haken füllt)
+    {\let\cvfact\cvfactwide\cvprojectsection}
+
     \cvsection{\LblEducation}
     \ContentEducation
 
-    \cvsection{\LblFurther}
-    \ContentFurther
+    % Leere Weiterbildung druckt keine Überschrift
+    \ifdefempty{\ContentFurther}{}{\cvsection{\LblFurther}\ContentFurther}
 
     % Kompetenzen ausgeschrieben — im breiten Satzspiegel als Marke/Inhalt-Zeilen
     \cvsection{\LblSkills}

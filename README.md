@@ -24,6 +24,7 @@ Fertig gebaute Beispiele liegen in [`vorschau/`](vorschau/) — dasselbe Blindte
 │   ├── cover-letter.tex           # Anschreiben
 │   ├── motivation.tex             # Motivationsschreiben
 │   ├── feedback.tex               # optional: Feedback nach dem Gespräch
+│   ├── cv-master.tex              # Treiber für den Master-Lebenslauf
 │   └── themes/
 │       ├── _common.tex            # Pakete, Icons, Sprache, Hilfsmakros
 │       ├── cv-content.tex         # Lebenslauf-Inhalt (Deutsch), layoutneutral
@@ -80,6 +81,7 @@ make rebuild APP=<ordner>   # archivierte Bewerbung mit ihren eigenen Briefen ne
 make cv                     # nur der Lebenslauf -> build/cv.pdf
 make feedback               # Feedback-Dokument bauen + ablegen
 make themes                 # Dossier in allen vier Layouts -> build/theme-*.pdf
+make cv-master              # Lebenslauf mit allen Bausteinen -> build/cv-master.pdf
 make theme-sidebar          # ein Layout bauen und öffnen
 make view                   # bauen + öffnen
 make watch                  # bei jeder Änderung neu bauen (inotify-tools)
@@ -138,6 +140,54 @@ git merge template/main   # Konflikte entstehen meist nur in den Inhaltsdateien
 ```
 
 Eigene Bewerbungen gehören nie in dieses Template-Repo, sondern ins private Repo.
+
+## Schalter
+
+Die Inhaltsdatei `themes/cv-content.tex` ist ein Master-Lebenslauf: Sie darf alles enthalten, was je in einem Lebenslauf stehen soll. Was eine Bewerbung davon zeigt, steuert ihre `meta.tex` mit Schaltern. `make cv-master` baut die vollständige Fassung mit allen Bausteinen (Beispiel: [`vorschau/master.pdf`](vorschau/master.pdf)).
+
+```latex
+\cvshow{projects}     % Baustein dazu, der sonst wegbleibt
+\cvhide{french}       % Baustein weg, der sonst erscheint
+```
+
+In der Inhaltsdatei wird ein Baustein so markiert:
+
+```latex
+\cvopt{details}{\item ...}              % nur mit \cvshow{details} oder im Master
+\cvstd{french}{\cvfact{Französisch}{...}}  % immer, ausser mit \cvhide{french}
+\cvifopt{reference}{benannt}{Standardsatz} % zwei Fassungen
+```
+
+Ein neuer Schlüssel entsteht durch Verwenden, eine Liste muss nirgends gepflegt werden. Die Schlüssel der Vorlage:
+
+| Schlüssel | Wirkung | Voreinstellung |
+|---|---|---|
+| `photo` | Foto im Kopf | an |
+| `keywords` | Stichwortzeile unter dem Titel (kompakt, rueckgrat) | an |
+| `github`, `web`, `nationality` | weitere Kontaktangaben (`web` nur rueckgrat) | aus |
+| `exitreason` | Austrittsgrund in der Notizzeile der aktuellen Stelle | an |
+| `details`, `tools` | zusätzliche Stichpunkte in der Berufserfahrung | aus |
+| `projects` | Abschnitt Projekte nach der Berufserfahrung | aus |
+| `grades` | Abschlussnoten | aus |
+| `further` | Abschnitt Weiterbildung | an |
+| `french` | Sprache Französisch | an |
+| `interests` | Abschnitt Interessen | aus |
+| `reference` | benannte Referenz statt des Standardsatzes | aus |
+| `coverpage` | Deckblatt als erste Seite des Dossiers | aus |
+
+Dazu kommen Schalter, die in der `meta.tex` als Befehl gesetzt werden:
+
+| Befehl | Wirkung |
+|---|---|
+| `\newcommand{\noletters}{}` | Dossier ohne Briefe |
+| `\newcommand{\nomotivation}{}` | ohne Motivationsschreiben |
+| `\newcommand{\lettersfirst}{}` | Briefe vor dem Lebenslauf |
+| `\newcommand{\enclosures}{Lebenslauf, Zeugnisse}` | Beilagenzeile am Ende des Anschreibens |
+| `\newcommand{\cvsummaryoverride}{...}` | eigenes Kurzprofil für diese Bewerbung |
+| `\newcommand{\cvskillsoverride}{\cvfact{..}{..}}` | eigene Kompetenzzeilen für diese Bewerbung |
+| `\newcommand{\cvheaderclassic}{}` | kompakt: früherer Kopf mit dreispaltigen Kontaktangaben |
+
+Und Einstellungen in der Inhaltsdatei: `\CVphotomirror` (Foto spiegeln), `\CVphotozoom` und `\CVphotoshift` (Bildausschnitt), `\CVphotoaspect` (Hochformat, nur rueckgrat), `\CVsignature` (Unterschrift als Bild im Brief).
 
 ## Autoren
 

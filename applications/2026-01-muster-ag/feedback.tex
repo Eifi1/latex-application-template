@@ -12,6 +12,8 @@
 
 \newcommand{\application}{2026-01-muster-ag}
 \ifdefined\appoverride\let\application\appoverride\fi
+\providecommand{\cvshow}[1]{\expandafter\def\csname cvshow@#1\endcsname{}}
+\providecommand{\cvhide}[1]{\expandafter\def\csname cvhide@#1\endcsname{}}
 \input{applications/\application/meta}
 \providecommand{\cvjobtitle}{Entwicklungsingenieur}
 \providecommand{\cvcontent}{cv-content}

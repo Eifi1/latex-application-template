@@ -36,6 +36,17 @@ cv: $(BUILD_DIR)
 	$(XELATEX) -jobname=cv "\def\cvonly{}\input{$(TEMPLATE_DIR)/application.tex}"
 	@echo "  -> $(BUILD_DIR)/cv.pdf"
 
+# Master-Lebenslauf: alle Bausteine der Inhaltsdatei, zum Durchsehen.
+#   make cv-master                 -> build/cv-master.pdf, build/cv-master-en.pdf
+#   make cv-master CVTHEME=sidebar    anderes Layout
+CVTHEME ?= kompakt
+cv-master: $(BUILD_DIR)
+	$(XELATEX) -jobname=cv-master "\def\cvtheme{$(CVTHEME)}\input{$(TEMPLATE_DIR)/cv-master.tex}" > /dev/null
+	$(XELATEX) -jobname=cv-master "\def\cvtheme{$(CVTHEME)}\input{$(TEMPLATE_DIR)/cv-master.tex}" > /dev/null
+	$(XELATEX) -jobname=cv-master-en "\def\cvtheme{$(CVTHEME)}\def\cvmasteren{}\input{$(TEMPLATE_DIR)/cv-master.tex}" > /dev/null
+	$(XELATEX) -jobname=cv-master-en "\def\cvtheme{$(CVTHEME)}\def\cvmasteren{}\input{$(TEMPLATE_DIR)/cv-master.tex}" > /dev/null
+	@echo "  -> $(BUILD_DIR)/cv-master.pdf, $(BUILD_DIR)/cv-master-en.pdf"
+
 # Feedback nach dem Gespräch bauen und ablegen
 feedback: $(BUILD_DIR)
 	@echo "=== Feedback $(APPLICATION) ==="
@@ -83,4 +94,4 @@ watch:
 clean:
 	rm -rf $(BUILD_DIR)
 
-.PHONY: application cv feedback rebuild themes view watch clean
+.PHONY: application cv cv-master feedback rebuild themes view watch clean

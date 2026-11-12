@@ -27,10 +27,13 @@
 
 \input{templates/themes/_common.tex}
 \usepackage{eso-pic}
+\usepackage{refcount}
 
 % Flatterrand mit wenig Trennungen: In einer Schrift mit fester Zeichenbreite fallen
 % Trennstriche stärker auf als kurze Zeilen.
-\renewcommand{\bodyflow}{\RaggedRight\hyphenpenalty=1000}
+\renewcommand{\cvbodyhyphenpenalty}{1000}
+% Deckblatt: Die Schrift läuft breit, die Zielstelle steht deshalb kleiner
+\renewcommand{\coverpagetitlesize}{\fontsize{17pt}{22pt}\selectfont}
 
 %-------------------------------------------------------------------------
 %  Farben — Grün nur für Knoten, nie für Text
@@ -80,7 +83,7 @@
 \newcommand{\notefont}{\fontsize{8pt}{11pt}\selectfont\itshape}
 \newcommand{\labelfont}{\mediumfont\fontsize{8.6pt}{11pt}\selectfont
     \addfontfeature{LetterSpace=2.5}}
-\newcommand{\lead}[1]{{\mediumfont#1}}
+\newcommand{\lead}[1]{{\mediumfont#1\cvrealspace}}
 
 % Grundlinien-Schutz, siehe kompakt.tex
 \newcommand{\vtopsafe}{\leavevmode}
@@ -115,11 +118,30 @@
 \newcommand{\rglabel}[1]{\rgleftcol{\nohyph\labelfont\color{ink}#1}\rgnode}
 
 % Vor Einträgen und Fakten-Zeilen steht der Titel auf einer eigenen Zeile.
-\newcommand{\cvsection}[1]{%
+% Optionales Argument wie in kompakt.tex: Platzbedarf in Zeilen.
+\newif\ifrgfresh
+\def\rgcursection{}
+\newcommand{\rglabelline}[1]{{\rglabel{#1}\strut\par}\nobreak\vspace{5pt}\nobreak}
+\newcommand{\cvsection}[2][5]{%
     \par\addvspace{14pt}%
-    \Needspace*{5\baselineskip}%
-    {\rglabel{#1}\strut\par}\nobreak\vspace{5pt}\nobreak
+    \Needspace*{#1\baselineskip}%
+    \gdef\rgcursection{#2}\global\rgfreshtrue
+    \rglabelline{#2}%
 }
+
+% Beginnt ein Eintrag auf einer neuen Seite, steht der Abschnittstitel dort noch einmal.
+% Die Seitenzahlen kommen aus dem vorigen Lauf, deshalb braucht es zwei Läufe.
+\newcounter{rgentry}
+\newcommand{\rgentrystart}{%
+    \stepcounter{rgentry}%
+    \ifrgfresh\else\ifnum\value{rgentry}>1
+        \ifnum\getpagerefnumber{rgentry\the\numexpr\value{rgentry}-1\relax}<\getpagerefnumber{rgentry\arabic{rgentry}}\relax
+            \rglabelline{\rgcursection}%
+        \fi
+    \fi\fi
+    \global\rgfreshfalse
+}
+\newcommand{\rgentrylabel}{\label{rgentry\arabic{rgentry}}}
 
 %-------------------------------------------------------------------------
 %  Einträge — Datum in der linken Spalte, Inhalt rechts.
@@ -131,7 +153,8 @@
 \newcommand{\cvrole}[4]{%
     \par\addvspace{7pt}%
     \Needspace*{4\baselineskip}% Station nicht als Waise an den Seitenfuss
-    {\rgleftcol{\datefont\color{muted}#4}\nohyph\rolefont\color{ink}#1\par}\nobreak
+    \rgentrystart
+    {\rgleftcol{\datefont\color{muted}#4}\rgentrylabel\nohyph\rolefont\color{ink}#1\par}\nobreak
     {\leavevmode\cvorgline{#2}{#3}\par}\nobreak
     \addvspace{1.5pt}%
 }
@@ -141,7 +164,8 @@
 \newcommand{\cvplain}[3]{%
     \par\addvspace{7pt}%
     \Needspace*{3\baselineskip}%
-    {\rgleftcol{\datefont\color{muted}#2}\nohyph\rolefont\color{ink}#1\par}\nobreak
+    \rgentrystart
+    {\rgleftcol{\datefont\color{muted}#2}\rgentrylabel\nohyph\rolefont\color{ink}#1\par}\nobreak
     {\bodyflow #3\par}%
 }
 
@@ -178,17 +202,34 @@
 
 % Reihenfolge im Textstrom (für Parser): Name, Titel, Link, Foto, dann die Kontaktspalte.
 % Die Kontaktspalte wird danach nach links zurückgeschoben.
+% Foto: Breite \rgphotow, Höhe \CVphotoaspect mal Breite (1 = quadratisch, 1.25 = 4:5)
+\newcommand{\rgphoto}{%
+    \begin{tikzpicture}
+        \pgfmathsetlengthmacro{\rgpw}{\rgphotow}
+        \pgfmathsetlengthmacro{\rgph}{\CVphotoaspect*\rgphotow}
+        \clip (0,0) rectangle (\rgpw,-\rgph);
+        \node[anchor=north west, inner sep=0] at (0,0)
+            {\scalebox{\CVphotomirror}[1]{\includegraphics[width=\rgpw]{\CVphoto}}};
+    \end{tikzpicture}%
+}
+
+% Reihenfolge im Textstrom (für Parser): Name, Titel, Stichworte, Links, Foto, dann die
+% Kontaktspalte. Die Kontaktspalte wird danach nach links zurückgeschoben.
 \newcommand{\makecvheader}{%
     \noindent
     \begin{minipage}[t]{\dimexpr\linewidth-\rgphotow-\rgcolG\relax}\vspace{0pt}%
         \vspace{-3pt}{\namefont\nohyph\color{ink}\CVname\par}\vspace{2pt}%
         {\rolelabelfont\color{inksoft}\CVrole\par}%
-        \vspace{39pt}%
-        {\metafont\color{muted}\cvlink\par}%
+        \vspace{11pt}%
+        {\metafont\color{muted}\ifdefempty{\CVkeywords}{\mbox{}}{\CVkeywords}\par
+         \vspace{6pt}%
+         \ifdefempty{\CVwebtext}{}{\cvweb\par}%
+         \ifdefempty{\CVgithubtext}{}{\cvgithub\par}%
+         \ifdefempty{\CVlinktext}{}{\cvlink\par}}%
     \end{minipage}%
     \hspace{\rgcolG}%
     \begin{minipage}[t]{\rgphotow}\vspace{0pt}%
-        \photobox{\rgphotow}{0pt}%
+        \cvstd{photo}{\rgphoto}%
     \end{minipage}%
     \hspace*{-\dimexpr\linewidth+\rgpull\relax}%
     \begin{minipage}[t]{\rgcolL}\vspace{0pt}\RaggedLeft
@@ -196,6 +237,7 @@
         {\metafont\color{muted}%
          \rgaddress\par
          \rgborn\CVbirth\par
+         \ifdefempty{\CVnationality}{}{\CVnationality\ifdefempty{\CVpermit}{}{, \CVpermit}\par}%
          \CVcivil\par
          \vspace{6pt}%
          \CVphone\par
@@ -248,6 +290,7 @@
          \href{mailto:\CVmail}{\CVmail}\par}%
     \end{minipage}%
     \par\vspace{14mm}%
+    \letterbodyfont
     \bodyflow % Brieftext im Flatterrand: Blocksatz reisst in dieser Schrift Löcher
 }
 
@@ -268,14 +311,17 @@
     \cvsection{\LblSkills}
     \ContentSkills
 
-    \cvsection{\LblExperience}
+    \cvsection[8]{\LblExperience}
     \ContentExperience
 
-    \cvsection{\LblEducation}
+    % Projekte (nur, wenn die Inhaltsdatei den Haken füllt)
+    \cvprojectsection
+
+    \cvsection[8]{\LblEducation}
     \ContentEducation
 
-    \cvsection{\LblFurther}
-    \ContentFurther
+    % Leere Weiterbildung druckt keine Überschrift
+    \ifdefempty{\ContentFurther}{}{\cvsection[8]{\LblFurther}\ContentFurther}
 
     \cvsection{\LblLanguages}
     \ContentLanguages

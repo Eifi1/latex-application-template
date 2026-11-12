@@ -65,7 +65,7 @@
 \newcommand{\rolefont}{\displayfont\fontsize{11pt}{13.5pt}\selectfont}
 \newcommand{\orgfont}{\mediumfont\fontsize{9.4pt}{12pt}\selectfont}
 \newcommand{\notefont}{\fontsize{8.7pt}{11.5pt}\selectfont\itshape}
-\newcommand{\lead}[1]{{\mediumfont#1}}
+\newcommand{\lead}[1]{{\mediumfont#1\cvrealspace}}
 
 \newcommand{\vtopsafe}{\leavevmode}
 
@@ -77,14 +77,16 @@
 %  Sektionen
 %-------------------------------------------------------------------------
 
-\newcommand{\cvsection}[1]{%
+% Optionales Argument wie in kompakt.tex (Platzbedarf in Zeilen;
+% hier bleibt die bisherige Voreinstellung von 5 Zeilen.
+\newcommand{\cvsection}[2][5]{%
     \par\addvspace{12pt}%
-    \Needspace*{5\baselineskip}%
+    \Needspace*{#1\baselineskip}%
     % Überschrift und Linie sitzen bündig zur Inhaltsspalte (3,0 cm), damit
     % die Zeitachse frei bleibt. Über die volle Breite gesetzt würden beide
     % die Achse kreuzen — das liest sich als Fehler, nicht als Gestaltung.
     \noindent\hspace*{3.0cm}{\mediumfont\fontsize{9.5pt}{9.5pt}\selectfont
-        \addfontfeature{LetterSpace=18}\color{ink}\MakeUppercase{#1}}%
+        \addfontfeature{LetterSpace=18}\color{ink}\MakeUppercase{#2}}%
     \par\vspace{5pt}%
     \noindent\hspace*{3.0cm}{\color{accentdark}\rule{1.5cm}{1.4pt}}%
     {\color{rule}\rule{\dimexpr\linewidth-4.5cm\relax}{0.5pt}}%
@@ -147,7 +149,7 @@
     \begin{itemize}[leftmargin=13pt, labelwidth=7pt, labelsep=6pt, labelindent=0pt,
                     itemindent=0pt, topsep=3pt, itemsep=3pt,
                     parsep=0pt, partopsep=0pt, align=left,
-                    label={\color{accentdark}\textendash}]
+                    label={\color{accentdark}\textendash\cvrealspace}]
         \bodyflow
     }{\end{itemize}}
 
@@ -158,7 +160,7 @@
 \newcommand{\cvfact}[2]{%
     \noindent
     \begin{minipage}[t]{2.2cm}\raggedleft\vtopsafe
-        \datefont\color{muted}\strut#1\end{minipage}%
+        \datefont\color{muted}\strut#1\cvrealspace\end{minipage}%
     \hspace{0.8cm}%
     \begin{minipage}[t]{\dimexpr\linewidth-3.0cm\relax}\bodyflow\strut#2\end{minipage}%
     \par\vspace{4pt}%
@@ -173,7 +175,7 @@
 % Kontaktblock im Kopfband. Bewusst eine Tabelle und keine Minipages mit
 % festen Spaltenanteilen: die Spalten richten sich nach der längsten
 % Angabe. Sonst muss bei jeder neuen Adresse, Nummer oder E-Mail neu
-% gerechnet werden, und eine längere Adresse bricht nicht um.
+% gerechnet werden — eine längere Adresse bricht um.
 \newcommand{\bandcell}[2]{{\color{accent}#1}~~#2}
 
 % Zwei Spalten, drei Zeilen: links die Erreichbarkeit, rechts die Angaben
@@ -189,6 +191,13 @@
         \bandcell{\icoheart}{\CVcivil} \\
         \bandcell{\icomail}{\href{mailto:\CVmail}{\color{onband}\CVmail}} &
         \bandcell{\CVlinkicon}{\cvlink} \\
+        % Vierte Zeile: Nationalität links, GitHub rechts, beide optional.
+        % Die Bewilligung (\CVpermit bleibt hier im Nationalitätsplatz:
+        % Eine fünfte Zeile ragt aus dem Band (geprüft, und die Spalten
+        % sind breit genug für beides.
+        \ifboolexpr{test {\ifdefempty{\CVnationality}} and test {\ifdefempty{\CVgithubtext}}}{}{%
+            \ifdefempty{\CVnationality}{}{\bandcell{\icoflag}{\CVnationality\ifdefempty{\CVpermit}{}{, \CVpermit}}} &
+            \ifdefempty{\CVgithubtext}{}{\bandcell{\icogithub}{\color{onband}\cvgithub}} \\}%
     \end{tabular}}%
 }
 
@@ -208,7 +217,7 @@
     \end{minipage}%
     \hfill
     \begin{minipage}[c]{3.9cm}
-        \raggedleft\photobox{3.9cm}{6pt}
+        \raggedleft\cvstd{photo}{\photobox{3.9cm}{6pt}}
     \end{minipage}%
     \par\vspace{0.95cm}%
     % Kurzprofil
@@ -276,7 +285,8 @@
         \raggedleft\metafont\color{onband}\setlength{\parskip}{0pt}
         \CVaddress\par\CVphone\par\href{mailto:\CVmail}{\color{onband}\CVmail}
     \end{minipage}
-    \par\vspace{1.55cm}
+    \par\vspace{1.55cm}%
+    \letterbodyfont
 }
 
 \newcommand{\lettersection}[1]{%
@@ -298,14 +308,17 @@
     \cvsection{\LblExperience}
     \ContentExperience
 
+    % Open Source & Projekte (nur, wenn die Inhaltsdatei den Haken füllt)
+    \cvprojectsection
+
     \cvsection{\LblEducation}
     \ContentEducation
 
     \cvsection{\LblSkills}
     \ContentSkills
 
-    \cvsection{\LblFurther}
-    \ContentFurther
+    % Leere Weiterbildung druckt keine Überschrift
+    \ifdefempty{\ContentFurther}{}{\cvsection{\LblFurther}\ContentFurther}
 
     \cvsection{\LblLanguages}
     \ContentLanguages

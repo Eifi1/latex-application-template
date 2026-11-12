@@ -9,6 +9,43 @@
 %  Alles unten ist Blindtext einer fiktiven Person -- durch die eigenen
 %  Angaben ersetzen. Die englische Fassung (cv-content-en.tex) hat dieselbe
 %  Struktur; wer nur auf Deutsch schreibt, kann sie ignorieren.
+%
+%  MASTER-LEBENSLAUF. Diese Datei darf ALLE Angaben enthalten, die je in
+%  einem Lebenslauf stehen sollen. Was eine Bewerbung davon zeigt,
+%  entscheidet ihre meta.tex:
+%      \cvshow{schluessel}    Baustein dazu, der sonst wegbleibt
+%      \cvhide{schluessel}    Baustein weg, der sonst erscheint
+%  "make cv-master" baut die vollständige Fassung zum Durchsehen.
+%
+%  In dieser Datei:
+%      \cvopt{schluessel}{...}             nur mit \cvshow oder im Master
+%      \cvstd{schluessel}{...}             immer, ausser mit \cvhide
+%      \cvifopt{schluessel}{dann}{sonst}   zwei Fassungen desselben Textes
+%
+%  Schlüssel dieser Vorlage (Voreinstellung: aus, ausser markiert mit *):
+%    photo *        Foto im Kopf
+%    keywords *     Stichwortzeile unter dem Titel (kompakt, rueckgrat)
+%    github         GitHub als weiterer Kontaktplatz
+%    web            eigene Website als Link (rueckgrat)
+%    nationality    Nationalität und Bewilligung als Kontaktplätze
+%    exitreason *   Austrittsgrund in der Notizzeile der aktuellen Stelle
+%    details        zwei zusätzliche Stichpunkte in der aktuellen Stelle
+%    tools          Stichpunkt Berechnungswerkzeuge in der früheren Stelle
+%    projects       Abschnitt Projekte nach der Berufserfahrung
+%    grades         Abschlussnoten in der Ausbildung
+%    further *      Abschnitt Weiterbildung
+%    french *       Sprachen: Französisch
+%    interests      Abschnitt Interessen
+%    reference      benannte Referenz statt des Standardsatzes
+%  Eigene Schlüssel entstehen einfach durch Verwenden: \cvopt{neu}{...}.
+%
+%  Weitere Schalter in der meta.tex:
+%    \newcommand{\cvsummaryoverride}{...}   eigenes Kurzprofil für diese Bewerbung
+%    \newcommand{\cvskillsoverride}{...}    eigene Kompetenzzeilen (\cvfact-Zeilen)
+%    \newcommand{\cvheaderclassic}{}        kompakt: früherer Kopf, Kontakt dreispaltig
+%    \newcommand{\noletters}{}  \newcommand{\nomotivation}{}  \newcommand{\lettersfirst}{}
+%    \cvshow{coverpage}                     Deckblatt
+%    \newcommand{\enclosures}{...}          Beilagenzeile im Anschreiben
 %=========================================================================
 
 %--- Stammdaten ----------------------------------------------------------
@@ -23,6 +60,10 @@
 \renewcommand{\CVphotoshift}{0}
 % Foto spiegeln, damit die Person zum Text hin blickt: -1 (Voreinstellung 1)
 \renewcommand{\CVphotomirror}{1}
+% Nur rueckgrat: Höhe des Fotos im Verhältnis zur Breite, 1.25 = Hochformat 4:5
+\renewcommand{\CVphotoaspect}{1}
+% Unterschrift als Bild über dem Namen im Brief, z.B. images/unterschrift.png (leer = keine)
+\renewcommand{\CVsignature}{}
 \newcommand{\CVaddress}{Musterstrasse 1, 8000 Zürich}
 % Ort für die Datumszeile der Briefe
 \newcommand{\CVcity}{Zürich}
@@ -34,6 +75,20 @@
 \renewcommand{\CVlinkicon}{\icolinked}
 \renewcommand{\CVlinktext}{max-muster}
 \renewcommand{\CVlinkurl}{https://www.linkedin.com/in/max-muster/}
+% Weitere Kontaktplätze, je über einen Schlüssel
+\cvopt{github}{%
+    \renewcommand{\CVgithubtext}{github.com/benutzername}%
+    \renewcommand{\CVgithuburl}{https://github.com/}}
+\cvopt{web}{%
+    \renewcommand{\CVwebtext}{muster.example}%
+    \renewcommand{\CVweburl}{https://www.example.com}}
+\cvopt{nationality}{%
+    \renewcommand{\CVnationality}{Schweizer}%
+    \renewcommand{\CVpermit}{}}
+\cvstd{keywords}{\renewcommand{\CVkeywords}{entwicklung · versuch · simulation · python}}
+
+% Kopf im Layout kompakt: Kontaktangaben zweispaltig neben dem Foto
+\ifdefined\cvheaderclassic\else\providecommand{\cvheadertwocol}{}\fi
 
 %--- Kurzprofil ----------------------------------------------------------
 
@@ -42,6 +97,8 @@ Ingenieur mit acht Jahren Erfahrung in Entwicklung und Erprobung mechatronischer
 Baugruppen -- von der Auslegung über den Versuch bis zur Auswertung. Lorem ipsum dolor
 sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore.%
 }
+% Eigenes Kurzprofil je Bewerbung: \newcommand{\cvsummaryoverride}{...} in der meta.tex
+\ifdefined\cvsummaryoverride\renewcommand{\ContentSummary}{\cvsummaryoverride}\fi
 
 %--- Berufserfahrung -----------------------------------------------------
 
@@ -49,7 +106,7 @@ sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
 \begin{cvexperience}
 
 \cvrole{Entwicklungsingenieur}{Muster Technik AG}{Zürich, Schweiz}{03/2020 -- heute}
-\cvnote{Optionale Notizzeile, z.B. frühere Funktion im selben Unternehmen oder Austrittsgrund}
+\cvnote{03/2020 -- 12/2022 als Versuchsingenieur\cvstd{exitreason}{ • Austritt wegen Standortverlagerung}}
 \begin{cvbullets}
     \item \lead{Auslegung:} Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
     sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat
@@ -57,6 +114,10 @@ sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
     Stet clita kasd gubergren, no sea takimata sanctus est
     \item \lead{Auswertung:} Automatisierte Auswertung mit Python, lorem ipsum dolor
     sit amet, consetetur sadipscing elitr
+    \cvopt{details}{\item \lead{Simulation:} Duis autem vel eum iriure dolor in hendrerit in
+    vulputate velit esse molestie consequat
+    \item \lead{Schulungen:} Vel illum dolore eu feugiat nulla facilisis at vero eros et
+    accumsan}
 \end{cvbullets}
 
 \cvrole{Versuchsingenieur}{Beispiel GmbH}{Stuttgart, Deutschland}{10/2016 -- 02/2020}
@@ -65,6 +126,8 @@ sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
     sed diam nonumy eirmod tempor invidunt ut labore
     \item \lead{Messtechnik:} Kraft-, Weg- und Temperaturmesstechnik, at vero eos et
     accusam et justo duo dolores
+    \cvopt{tools}{\item \lead{Berechnungswerkzeuge:} Stet clita kasd gubergren, no sea
+    takimata sanctus est lorem ipsum dolor sit amet}
 \end{cvbullets}
 
 % Zwei Zeiträume derselben Rolle beim selben Arbeitgeber: ein Eintrag.
@@ -75,31 +138,49 @@ sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
 \end{cvexperience}%
 }
 
+%--- Projekte ------------------------------------------------------------
+%  Abschnitt nach der Berufserfahrung, nur mit \cvshow{projects} oder im Master.
+
+\renewcommand{\cvprojectsection}{\cvopt{projects}{%
+    \cvsection[8]{\LblProjects}
+    \begin{cvexperience}
+    \cvrole{Werkstatt-Planer}{Web-Anwendung für eine offene Werkstatt}{\href{https://www.example.com}{example.com/werkstatt}}{2023 -- heute}
+    \begin{cvbullets}
+        \item \lead{Idee und Umsetzung:} Mitglieder reservieren Maschinen und sehen, wer eine
+        Einführung geben kann
+        \item \lead{Technik:} Python, Flask, SQLite
+    \end{cvbullets}
+    \end{cvexperience}%
+}}
+
 %--- Ausbildung ----------------------------------------------------------
 
 \newcommand{\ContentEducation}{%
 \begin{cvexperience}
 
 \cvrole{Master of Science, Maschinenbau}{Technische Universität Musterstadt}{Musterstadt, Deutschland}{10/2014 -- 09/2016}
-\cvnote{Schwerpunkt: Konstruktion und Simulation}
+\cvnote{Schwerpunkt: Konstruktion und Simulation\cvopt{grades}{, Abschlussnote 1,5}}
 \begin{cvbullets}
-    \item \lead{Masterarbeit:} Lorem ipsum dolor sit amet, consetetur sadipscing elitr
+    \item \lead{Masterarbeit:} Lorem ipsum dolor sit amet, consetetur sadipscing elitr\cvopt{grades}{ (Note 1,3)}
 \end{cvbullets}
 
 \cvrole{Bachelor of Science, Maschinenbau}{Technische Universität Musterstadt}{Musterstadt, Deutschland}{10/2011 -- 09/2014}
+\cvopt{grades}{\cvnote{Abschlussnote 2,0}}
 
 \end{cvexperience}%
 }
 
 %--- Weiterbildung -------------------------------------------------------
+%  Mit \cvhide{further} bleibt der Abschnitt samt Überschrift weg.
 
-\newcommand{\ContentFurther}{%
+\newcommand{\ContentFurther}{}
+\cvstd{further}{\renewcommand{\ContentFurther}{%
 \begin{cvexperience}
 \cvplain{Python für Ingenieure}{2021}{Lorem ipsum dolor sit amet, consetetur
 sadipscing elitr}
 \cvplain{Projektmanagement}{2019}{At vero eos et accusam et justo duo dolores}
 \end{cvexperience}%
-}
+}}
 
 %--- Kompetenzen ---------------------------------------------------------
 %  Bewusst ohne Prozentbalken: eine Skala ohne Bezugsgrösse ist für den
@@ -112,6 +193,9 @@ sadipscing elitr}
 \cvfact{Systeme}{Siemens Teamcenter (PLM), SAP}
 \cvfact{Methodik}{Versuchsplanung, FMEA, Reviews}%
 }
+% Eigene Kompetenzzeilen je Bewerbung: \newcommand{\cvskillsoverride}{\cvfact{..}{..}...}
+% in der meta.tex. Der Master zeigt immer die vollständigen Zeilen.
+\ifdefined\cvskillsoverride\ifdefined\cvmaster\else\renewcommand{\ContentSkills}{\cvskillsoverride}\fi\fi
 
 % Kurzform als Schlagwort-Chips (nur das Sidebar-Theme zeigt sie)
 \newcommand{\ContentTags}{%
@@ -124,14 +208,21 @@ sadipscing elitr}
 \newcommand{\ContentLanguages}{%
 \cvfact{Deutsch}{Muttersprache (C2)}
 \cvfact{Englisch}{Verhandlungssicher (C1)}
-\cvfact{Französisch}{Grundkenntnisse (A2)}%
+\cvstd{french}{\cvfact{Französisch}{Grundkenntnisse (A2)}}%
 }
 
 %--- Zusatzabschnitte ----------------------------------------------------
 %  \cvextrasections führt jedes Theme am Ende des Lebenslaufs aus -- für
-%  Abschnitte wie Referenzen oder Publikationen. Leer lassen = kein Abschnitt.
+%  Abschnitte wie Interessen oder Referenzen. Leer lassen = kein Abschnitt.
 
 \renewcommand{\cvextrasections}{%
-    \cvsection{Referenzen}
-    \cvfact{}{Referenzen werden auf Nachfrage gerne mitgeteilt.}%
+    \cvopt{interests}{%
+        \cvsection{Interessen}
+        \cvfact{Sport}{Velofahren, Skitouren}
+        \cvfact{Werkstatt}{Holzarbeiten und 3D-Druck}}%
+    \cvsection{\LblReferences}
+    \cvifopt{reference}%
+        {\cvfact{Erika Beispiel}{Leiterin Entwicklung, Muster Technik AG, Vorgesetzte}
+         \cvfact{Kontakt}{+41 79 000 00 01}}%
+        {\cvfact{}{Referenzen werden auf Nachfrage gerne mitgeteilt.}}%
 }

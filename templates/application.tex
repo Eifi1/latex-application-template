@@ -30,7 +30,22 @@
 \newcommand{\application}{2026-01-muster-ag}
 % Von "make rebuild APP=..." auf der Kommandozeile überschrieben
 \ifdefined\appoverride\let\application\appoverride\fi
+
+%-------------------------------------------------------------------------
+%  Schalter. Die meta.tex der Bewerbung steuert damit, was erscheint:
+%     \cvshow{schluessel}   Baustein dazu, der sonst wegbleibt
+%     \cvhide{schluessel}   Baustein weg, der sonst erscheint
+%  Die Schlüssel stehen im Kopf von themes/cv-content.tex. Dazu kommen
+%     \newcommand{\noletters}{}      Dossier ohne Briefe
+%     \newcommand{\nomotivation}{}   ohne Motivationsschreiben
+%     \newcommand{\lettersfirst}{}   Briefe vor dem Lebenslauf
+%     \cvshow{coverpage}             Deckblatt als erste Seite
+%  Beide Makros müssen vor der meta.tex definiert sein.
+%-------------------------------------------------------------------------
+\providecommand{\cvshow}[1]{\expandafter\def\csname cvshow@#1\endcsname{}}
+\providecommand{\cvhide}[1]{\expandafter\def\csname cvhide@#1\endcsname{}}
 \input{applications/\application/meta}
+\ifdefined\noletters\def\cvonly{}\fi
 
 % Fallback für meta.tex ohne \cvjobtitle
 \providecommand{\cvjobtitle}{Entwicklungsingenieur}
@@ -58,18 +73,46 @@
     \newcommand{\letterdir}{templates}
 \fi
 
-\begin{document}
-
-\makecvbody
-
-\ifdefined\cvonly\else
-    \newpage
+% Die Briefe stehen in einer Gruppe, damit Briefschrift und Absatzabstand
+% nicht in den Lebenslauf laufen.
+\newcommand{\dossierletters}{%
+    \begingroup
     \makeletterhead
     \input{\letterdir/cover-letter}
-
+    \ifdefined\nomotivation\else
+        \newpage
+        \makeletterhead
+        \input{\letterdir/motivation}
+    \fi
     \newpage
-    \makeletterhead
-    \input{\letterdir/motivation}
-\fi
+    \endgroup
+}
+
+% Inhaltsverzeichnis des Deckblatts, in der Reihenfolge des Dossiers
+\newcommand{\coverletters}{\LblCoverLetter\ifdefined\nomotivation\else\ \textbullet\ \LblMotivation\fi}
+\ifdefined\cvonly
+    \renewcommand{\coverpagecontents}{\LblCV}
+\else\ifdefined\lettersfirst
+    \renewcommand{\coverpagecontents}{\coverletters\ \textbullet\ \LblCV}
+\else
+    \renewcommand{\coverpagecontents}{\LblCV\ \textbullet\ \coverletters}
+\fi\fi
+
+\begin{document}
+
+\cvopt{coverpage}{\begingroup\makecoverpage\endgroup}
+
+\ifdefined\cvonly
+    \makecvbody
+\else\ifdefined\lettersfirst
+    \dossierletters
+    % Die Kopfzeile des Lebenslaufs zählt ab seinem Beginn
+    \setcounter{page}{1}
+    \makecvbody
+\else
+    \makecvbody
+    \newpage
+    \dossierletters
+\fi\fi
 
 \end{document}

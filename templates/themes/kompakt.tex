@@ -64,7 +64,7 @@
 \newcommand{\rolefont}{\displayfont\fontsize{10.8pt}{13pt}\selectfont}
 \newcommand{\orgfont}{\mediumfont\fontsize{9.4pt}{12pt}\selectfont}
 \newcommand{\notefont}{\fontsize{8.7pt}{11.5pt}\selectfont\itshape}
-\newcommand{\lead}[1]{{\mediumfont#1}}
+\newcommand{\lead}[1]{{\mediumfont#1\cvrealspace}}
 
 % Grundlinien-Schutz: \color erzeugt in vertikalem Modus ein Whatsit; steht
 % es als erstes im \vtop einer [t]-Minipage, verliert die Box ihre Höhe und
@@ -78,10 +78,16 @@
 %  Sektionen
 %-------------------------------------------------------------------------
 
-\newcommand{\cvsection}[1]{%
-    \par\addvspace{10pt}%
+% Optionales Argument: Platzbedarf in Zeilen, damit die Überschrift nicht allein
+% am Seitenfuss steht, bei einem Lebenslauf mit drei Seiten: "Ausbildung" stand
+% unten auf Seite 2, der Inhalt auf Seite 3). Voreinstellung 3 = Überschrift, Linie
+% und eine Zeile (Kompetenzen, Sprachen, Referenzen). Folgt ein Stationseintrag
+% (\cvrole verlangt selbst 5 Zeilen), verlangt der Aufrufer 8: \cvsection[8]{...}.
+% Ein fester hoher Wert für alle Überschriften schob die Zweiseiter auf drei Seiten.
+\newcommand{\cvsection}[2][3]{%
+    \par\Needspace*{#1\baselineskip}\addvspace{10pt}%
     \noindent{\mediumfont\fontsize{9pt}{9pt}\selectfont
-        \addfontfeature{LetterSpace=18}\color{accent}\MakeUppercase{#1}}%
+        \addfontfeature{LetterSpace=18}\color{accent}\MakeUppercase{#2}}%
     % \nointerlineskip: ohne ihn setzt TeX die Linie als eigene Zeile im
     % vollen Grundlinienabstand, und der Abstand wird deutlich grösser als
     % die 4pt hier. Versalien haben keine Unterlängen, der Abstand ist also exakt.
@@ -129,13 +135,24 @@
     {\nohyph\orgfont\strut#1}\,{\metafont\color{muted}\textbullet}\,#3\par%
 }
 
+% Ein Punkt wird nie über einen Seitenumbruch geteilt (\interlinepenalty);
+% umbrochen wird nur zwischen zwei Punkten. beginpenalty hält die Liste an
+% ihrer Überschrift bzw. an der Firmenzeile der Station.
 \newenvironment{cvbullets}{%
-    \begin{itemize}[leftmargin=13pt, labelwidth=7pt, labelsep=6pt, labelindent=0pt,
+    \begin{itemize}[beginpenalty=10000,
+                    leftmargin=13pt, labelwidth=7pt, labelsep=6pt, labelindent=0pt,
                     itemindent=0pt, topsep=2.5pt, itemsep=2.5pt,
                     parsep=0pt, partopsep=0pt, align=left,
-                    label={\color{accent}\textendash}]
-        \bodyflow
+                    label={\color{accent}\textendash\cvrealspace}]
+        \bodyflow\interlinepenalty=10000\relax
     }{\end{itemize}}
+
+% Zwischenüberschrift in einer Station: Firmenschrift in Akzentfarbe, damit sie
+% sich von der Firmenzeile (Grundfarbe) und den Leads (fett) abhebt.
+\renewcommand{\cvsubhead}[1]{%
+    \par\Needspace*{5\baselineskip}\addvspace{5pt}%
+    {\nohyph\orgfont\color{accent}#1}\par\nopagebreak\vspace{0.5pt}%
+}
 
 %-------------------------------------------------------------------------
 %  Fakten-Zeilen (Kompetenzen, Sprachen) — dieselbe Schiene wie die
@@ -145,7 +162,7 @@
 \newcommand{\cvfact}[2]{%
     \noindent
     \begin{minipage}[t]{2.65cm}\raggedright\vtopsafe
-        \datefont\color{accent}\strut#1\end{minipage}%
+        \datefont\color{accent}\strut#1\cvrealspace\end{minipage}%
     \hspace{0.5cm}%
     \begin{minipage}[t]{\dimexpr\linewidth-3.15cm\relax}\bodyflow\strut#2\end{minipage}%
     \par\vspace{4pt}%
@@ -157,40 +174,90 @@
 %  Kopf des Lebenslaufs
 %-------------------------------------------------------------------------
 
-% Kontaktangaben in zwei Spalten, links unter Name und Titel. Das Foto steht rechts und
-% läuft über die ganze Kopfhöhe. \photowide ist seine Kantenlänge: 3.9 cm passt zu drei
-% Kontaktzeilen, mit einer vierten Zeile (z.B. Nationalität, Bewilligung) sind es 4.5 cm.
-\newlength{\photowide}\setlength{\photowide}{3.9cm}
 \newcommand{\cbox}[2]{%
-    \begin{minipage}[t]{0.5\linewidth}\vtopsafe\metafont\color{muted}
+    \begin{minipage}[t]{0.333\linewidth}\vtopsafe\metafont\color{muted}
         \strut#1~~#2\end{minipage}%
 }
 
 \newcommand{\contactgrid}{%
     \noindent
     \cbox{\icoloc}{\CVaddress}%
-    \cbox{\icophone}{\CVphone}\par\vspace{3pt}
+    \cbox{\icophone}{\CVphone}%
+    \cbox{\icomail}{\href{mailto:\CVmail}{\CVmail}}\par\vspace{3pt}
     \noindent
-    \cbox{\icomail}{\href{mailto:\CVmail}{\CVmail}}%
-    \cbox{\CVlinkicon}{\cvlink}\par\vspace{3pt}
-    \noindent
+    \cbox{\CVlinkicon}{\cvlink}%
     \cbox{\icocal}{\CVbirth}%
     \cbox{\icoheart}{\CVcivil}\par
+    % Dritte Zeile: Nationalität, Bewilligung und, bei Software-/
+    % Datenstellen, GitHub. Alle optional, die Zeile entfällt,
+    % wenn alle leer sind.
+    \ifboolexpr{test {\ifdefempty{\CVnationality}} and test {\ifdefempty{\CVpermit}}
+                and test {\ifdefempty{\CVgithubtext}}}{}{%
+        \vspace{3pt}\noindent
+        \ifdefempty{\CVnationality}{}{\cbox{\icoflag}{\CVnationality}}%
+        \ifdefempty{\CVpermit}{}{\cbox{\icopermit}{\CVpermit}}%
+        \ifdefempty{\CVgithubtext}{}{\cbox{\icogithub}{\cvgithub}}\par}%
+}
+
+% Kopf mit zweispaltigen Kontaktangaben: Sie stehen unter dem Namen, das Foto läuft rechts
+% über die ganze Kopfhöhe. Eingeschaltet über \cvheadertwocol, das die Inhaltsdateien setzen.
+% \newcommand{\cvheaderclassic}{} in der meta.tex schaltet für eine Bewerbung zurück auf den
+% früheren Kopf (drei Spalten über die ganze Breite, Foto 3.4 cm).
+% \photowide ist die Kantenlänge des Fotos: 4.5 cm passt zu vier Kontaktzeilen, bei drei
+% Zeilen sind es 3.9 cm.
+\newlength{\photowide}\setlength{\photowide}{4.5cm}
+\newcommand{\cboxtwo}[2]{%
+    \begin{minipage}[t]{0.5\linewidth}\vtopsafe\metafont\color{muted}
+        \strut#1~~#2\end{minipage}%
+}
+\newcommand{\contactgridtwo}{%
+    \noindent
+    \cboxtwo{\icoloc}{\CVaddress}%
+    \cboxtwo{\icophone}{\CVphone}\par\vspace{3pt}
+    \noindent
+    \cboxtwo{\icomail}{\href{mailto:\CVmail}{\CVmail}}%
+    \cboxtwo{\CVlinkicon}{\cvlink}\par\vspace{3pt}
+    \noindent
+    \cboxtwo{\icocal}{\CVbirth}%
+    \cboxtwo{\icoheart}{\CVcivil}\par
+    \ifboolexpr{test {\ifdefempty{\CVnationality}} and test {\ifdefempty{\CVpermit}}}{}{%
+        \vspace{3pt}\noindent
+        \ifdefempty{\CVnationality}{}{\cboxtwo{\icoflag}{\CVnationality}}%
+        \ifdefempty{\CVpermit}{}{\cboxtwo{\icopermit}{\CVpermit}}\par}%
+    \ifdefempty{\CVgithubtext}{}{\vspace{3pt}\noindent\cboxtwo{\icogithub}{\cvgithub}\par}%
 }
 
 \newcommand{\makecvheader}{%
+  \ifdefined\cvheadertwocol
     \noindent
     \begin{minipage}[b]{\dimexpr\linewidth-\photowide-0.7cm\relax}
         {\namefont\nohyph\color{ink}\CVname}\par\vspace{6pt}
-        {\rolelabelfont\color{accent}\MakeUppercase{\CVrole}}\par\vspace{9pt}
+        {\rolelabelfont\color{accent}\MakeUppercase{\CVrole}}\par
+        \ifdefempty{\CVkeywords}{}{\vspace{3pt}{\metafont\color{muted}\CVkeywords}\par}%
+        \vspace{9pt}
         \noindent{\color{rule}\rule{\linewidth}{0.5pt}}\par\vspace{6pt}
-        \contactgrid
+        \contactgridtwo
     \end{minipage}%
     \hfill
     \begin{minipage}[b]{\photowide}
-        \raggedleft\photobox{\photowide}{7pt}
+        \raggedleft\cvstd{photo}{\photobox{\photowide}{7pt}}
     \end{minipage}
     \par\vspace{11pt}
+  \else
+    \noindent
+    \begin{minipage}[b]{\dimexpr\linewidth-3.9cm\relax}
+        {\namefont\nohyph\color{ink}\CVname}\par\vspace{6pt}
+        {\rolelabelfont\color{accent}\MakeUppercase{\CVrole}}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}[b]{3.4cm}
+        \raggedleft\cvstd{photo}{\photobox{3.4cm}{6pt}}
+    \end{minipage}
+    \par\vspace{9pt}
+    \noindent{\color{rule}\rule{\linewidth}{0.5pt}}\par\vspace{6pt}
+    \contactgrid
+    \par\vspace{9pt}
+  \fi
     % Kurzprofil, links geklammert von einer Akzentlinie. Der Text wird
     % zuerst in eine Box gesetzt, dann bekommt die Linie deren gemessene
     % Höhe: eine fest gesetzte Länge würde je nach Textmenge über den
@@ -247,7 +314,8 @@
     \end{minipage}
     \par\vspace{8pt}
     \noindent{\color{accent}\rule{\linewidth}{1pt}}
-    \par\vspace{12pt}
+    \par\vspace{12pt}%
+    \letterbodyfont
 }
 
 \newcommand{\lettersection}[1]{%
@@ -268,14 +336,17 @@
     \cvsection{\LblSkills}
     \ContentSkills
 
-    \cvsection{\LblExperience}
+    \cvsection[8]{\LblExperience}
     \ContentExperience
 
-    \cvsection{\LblEducation}
+    % Open Source & Projekte (nur, wenn die Inhaltsdatei den Haken füllt)
+    \cvprojectsection
+
+    \cvsection[8]{\LblEducation}
     \ContentEducation
 
-    \cvsection{\LblFurther}
-    \ContentFurther
+    % Leere Weiterbildung druckt keine Überschrift
+    \ifdefempty{\ContentFurther}{}{\cvsection[8]{\LblFurther}\ContentFurther}
 
     \cvsection{\LblLanguages}
     \ContentLanguages

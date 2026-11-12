@@ -6,7 +6,8 @@
 %  unterscheiden sich. Wird über \cvcontent aus applications/<app>/meta.tex
 %  gewählt, zusammen mit \cvlanguage.
 %
-%  Aktualisierungen am deutschen Inhalt gehören hier gespiegelt.
+%  Aktualisierungen am deutschen Inhalt gehören hier gespiegelt. Die Schalter
+%  (\cvshow, \cvhide, Schlüsselliste) sind dieselben wie in cv-content.tex.
 %=========================================================================
 
 %--- Abschnittsbeschriftungen -------------------------------------------
@@ -22,6 +23,13 @@
 \renewcommand{\LblProfile}{Profile}
 \renewcommand{\LblCV}{Curriculum Vitae}
 \renewcommand{\LblPage}{Page}
+\renewcommand{\LblProjects}{Projects}
+\renewcommand{\LblReferences}{References}
+\renewcommand{\LblEnclosures}{Enclosures}
+\renewcommand{\LblContents}{Contents}
+\renewcommand{\LblApplicationAs}{Application for}
+\renewcommand{\LblCoverLetter}{Cover letter}
+\renewcommand{\LblMotivation}{Letter of motivation}
 
 % Datum ohne Ordnungszahl: "16 September 2026" statt babels "16th September 2026".
 \renewcommand{\lettertoday}{\number\day\space
@@ -38,6 +46,10 @@
 \renewcommand{\CVphotoshift}{0}
 % Mirror the photo so the person faces the text: -1 (default 1)
 \renewcommand{\CVphotomirror}{1}
+% rueckgrat only: photo height relative to its width, 1.25 = portrait 4:5
+\renewcommand{\CVphotoaspect}{1}
+% Signature image above the name in letters, e.g. images/unterschrift.png (empty = none)
+\renewcommand{\CVsignature}{}
 \newcommand{\CVaddress}{Musterstrasse 1, 8000 Zurich}
 \newcommand{\CVcity}{Zurich}
 \newcommand{\CVphone}{+41 79 000 00 00}
@@ -47,6 +59,18 @@
 \renewcommand{\CVlinkicon}{\icolinked}
 \renewcommand{\CVlinktext}{max-muster}
 \renewcommand{\CVlinkurl}{https://www.linkedin.com/in/max-muster/}
+\cvopt{github}{%
+    \renewcommand{\CVgithubtext}{github.com/username}%
+    \renewcommand{\CVgithuburl}{https://github.com/}}
+\cvopt{web}{%
+    \renewcommand{\CVwebtext}{muster.example}%
+    \renewcommand{\CVweburl}{https://www.example.com}}
+\cvopt{nationality}{%
+    \renewcommand{\CVnationality}{Swiss}%
+    \renewcommand{\CVpermit}{}}
+\cvstd{keywords}{\renewcommand{\CVkeywords}{development · testing · simulation · python}}
+
+\ifdefined\cvheaderclassic\else\providecommand{\cvheadertwocol}{}\fi
 
 %--- Kurzprofil ----------------------------------------------------------
 
@@ -55,6 +79,7 @@ Engineer with eight years of experience in developing and testing mechatronic
 assemblies -- from design through testing to evaluation. Lorem ipsum dolor sit amet,
 consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore.%
 }
+\ifdefined\cvsummaryoverride\renewcommand{\ContentSummary}{\cvsummaryoverride}\fi
 
 %--- Berufserfahrung -----------------------------------------------------
 
@@ -62,7 +87,7 @@ consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore.%
 \begin{cvexperience}
 
 \cvrole{Development Engineer}{Muster Technik AG}{Zurich, Switzerland}{03/2020 -- present}
-\cvnote{Optional note line, e.g. an earlier role at the same employer or the reason for leaving}
+\cvnote{03/2020 -- 12/2022 as Test Engineer\cvstd{exitreason}{ • leaving because the site is relocating}}
 \begin{cvbullets}
     \item \lead{Design:} Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
     sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat
@@ -70,6 +95,10 @@ consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore.%
     Stet clita kasd gubergren, no sea takimata sanctus est
     \item \lead{Evaluation:} Automated evaluation in Python, lorem ipsum dolor
     sit amet, consetetur sadipscing elitr
+    \cvopt{details}{\item \lead{Simulation:} Duis autem vel eum iriure dolor in hendrerit in
+    vulputate velit esse molestie consequat
+    \item \lead{Training:} Vel illum dolore eu feugiat nulla facilisis at vero eros et
+    accumsan}
 \end{cvbullets}
 
 \cvrole{Test Engineer}{Beispiel GmbH}{Stuttgart, Germany}{10/2016 -- 02/2020}
@@ -78,6 +107,8 @@ consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore.%
     sed diam nonumy eirmod tempor invidunt ut labore
     \item \lead{Instrumentation:} Force, displacement and temperature measurement,
     at vero eos et accusam et justo duo dolores
+    \cvopt{tools}{\item \lead{Calculation tools:} Stet clita kasd gubergren, no sea
+    takimata sanctus est lorem ipsum dolor sit amet}
 \end{cvbullets}
 
 \cvrole{Student Assistant}{Institute for Example Research}{Munich, Germany}%
@@ -87,31 +118,47 @@ consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore.%
 \end{cvexperience}%
 }
 
+%--- Projekte ------------------------------------------------------------
+
+\renewcommand{\cvprojectsection}{\cvopt{projects}{%
+    \cvsection[8]{\LblProjects}
+    \begin{cvexperience}
+    \cvrole{Workshop Planner}{Web application for a community workshop}{\href{https://www.example.com}{example.com/workshop}}{2023 -- present}
+    \begin{cvbullets}
+        \item \lead{Idea and implementation:} Members book machines and see who can give an
+        introduction
+        \item \lead{Stack:} Python, Flask, SQLite
+    \end{cvbullets}
+    \end{cvexperience}%
+}}
+
 %--- Ausbildung ----------------------------------------------------------
 
 \newcommand{\ContentEducation}{%
 \begin{cvexperience}
 
 \cvrole{Master of Science, Mechanical Engineering}{Technical University of Musterstadt}{Musterstadt, Germany}{10/2014 -- 09/2016}
-\cvnote{Focus: design and simulation}
+\cvnote{Focus: design and simulation\cvopt{grades}{, final grade 1.5 (German scale, 1 = best)}}
 \begin{cvbullets}
-    \item \lead{Master's thesis:} Lorem ipsum dolor sit amet, consetetur sadipscing elitr
+    \item \lead{Master's thesis:} Lorem ipsum dolor sit amet, consetetur sadipscing elitr\cvopt{grades}{ (grade 1.3)}
 \end{cvbullets}
 
 \cvrole{Bachelor of Science, Mechanical Engineering}{Technical University of Musterstadt}{Musterstadt, Germany}{10/2011 -- 09/2014}
+\cvopt{grades}{\cvnote{Final grade 2.0}}
 
 \end{cvexperience}%
 }
 
 %--- Weiterbildung -------------------------------------------------------
 
-\newcommand{\ContentFurther}{%
+\newcommand{\ContentFurther}{}
+\cvstd{further}{\renewcommand{\ContentFurther}{%
 \begin{cvexperience}
 \cvplain{Python for Engineers}{2021}{Lorem ipsum dolor sit amet, consetetur
 sadipscing elitr}
 \cvplain{Project Management}{2019}{At vero eos et accusam et justo duo dolores}
 \end{cvexperience}%
-}
+}}
 
 %--- Kompetenzen ---------------------------------------------------------
 
@@ -121,6 +168,7 @@ sadipscing elitr}
 \cvfact{Systems}{Siemens Teamcenter (PLM), SAP}
 \cvfact{Methods}{Design of experiments, FMEA, reviews}%
 }
+\ifdefined\cvskillsoverride\ifdefined\cvmaster\else\renewcommand{\ContentSkills}{\cvskillsoverride}\fi\fi
 
 \newcommand{\ContentTags}{%
 \cvtag{Python}\cvtag{SQL}\cvtag{ANSYS}\cvtag{CAD}\cvtag{Instrumentation}%
@@ -132,12 +180,19 @@ sadipscing elitr}
 \newcommand{\ContentLanguages}{%
 \cvfact{German}{Native (C2)}
 \cvfact{English}{Fluent (C1)}
-\cvfact{French}{Basic (A2)}%
+\cvstd{french}{\cvfact{French}{Basic (A2)}}%
 }
 
 %--- Zusatzabschnitte ----------------------------------------------------
 
 \renewcommand{\cvextrasections}{%
-    \cvsection{References}
-    \cvfact{}{References available on request.}%
+    \cvopt{interests}{%
+        \cvsection{Interests}
+        \cvfact{Sport}{Cycling, ski touring}
+        \cvfact{Workshop}{Woodwork and 3D printing}}%
+    \cvsection{\LblReferences}
+    \cvifopt{reference}%
+        {\cvfact{Erika Beispiel}{Head of Development, Muster Technik AG, line manager}
+         \cvfact{Contact}{+41 79 000 00 01}}%
+        {\cvfact{}{References available on request.}}%
 }

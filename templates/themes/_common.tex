@@ -9,6 +9,48 @@
 \usepackage{xcolor}
 \usepackage{fontspec}
 \usepackage[final]{microtype}
+
+%-------------------------------------------------------------------------
+%  Echte Leerzeichen im PDF. TeX setzt Wortzwischenräume sonst
+%  nur als Abstand. Ältere PDF-Leser (z.B. pdf.js 2.x im PDF-Viewer von
+%  VS Code) und manche Bewerbungsportale lesen den Text dann ohne Leerzeichen
+%  aus ("Bei500TaktenproMinute"). Mit 2 schreibt XeTeX die Leerzeichen als
+%  Glyphen mit. Seitenzahlen und Blocksatz bleiben gleich, einzelne Absätze
+%  brechen etwas anders um (weniger Trennungen).
+%  Gemessen mit pdf.js 2.6, Anteil einzeln lesbarer Wörter: Briefe vorher
+%  3-5 %, nachher 97-99 %. Im Lebenslauf stieg der Anteil ebenfalls deutlich.
+%  Rest: Zeilen in der Kompetenzentabelle und einzelne Zeilen mit Bindestrich
+%  verlieren die Zeichen weiterhin (XeTeX-intern, nicht weiter eingegrenzt).
+%  pdftotext, pdf.js 4 und gängige Parser setzen dort ohnehin Leerzeichen aus
+%  den Abständen, ohne Doppelungen.
+%  ACHTUNG, XeTeX 0.999993 stürzt damit ab (Segmentation fault), wenn
+%    - irgendwo \spaceskip ungleich null ist (deshalb der Umbau bei ragged2e
+%      unten) oder
+%    - \RaggedRight/\bodyflow mitten in einem schon begonnenen Absatz
+%      eingeschaltet wird ("Text {\bodyflow ...}"). Immer am Absatzanfang.
+%  Und: Farbwechsel mitten im Fliesstext in derselben Schrift verrutschen
+%  (das farbige Wort bleibt schwarz, der Text danach wird farbig). Abhilfe:
+%  \kern0pt an beiden Enden des farbigen Stücks, z.B.
+%  {\color{red}\kern0pt Text\kern0pt} (so \platz in feedback.tex.
+%  Farbe zusammen mit Schriftwechsel (Ortsangaben, Symbole) ist nicht betroffen.
+%  Stürzt ein Build nach einer Vorlagenänderung ab, zuerst diese beiden Punkte
+%  prüfen. Notausgang: hier \XeTeXinterwordspaceshaping=0 setzen.
+%-------------------------------------------------------------------------
+\XeTeXinterwordspaceshaping=2
+% Als Zeichen geschrieben wird nur ein normaler Wortabstand. Nach Grossbuch-
+% staben (sfcode 999) und Satzzeichen (ohne \frenchspacing) setzt TeX einen
+% leicht abweichenden Abstand und XeTeX lässt das Zeichen weg ("SAPHANACloud").
+% Deshalb alle auf 1000 -- im Deutschen ohnehin üblich, im Satzbild unsichtbar.
+\count255=`A
+\loop\sfcode\count255=1000 \ifnum\count255<`Z \advance\count255 by 1 \repeat
+\sfcode`Ä=1000 \sfcode`Ö=1000 \sfcode`Ü=1000
+\AtBeginDocument{\frenchspacing}
+% Unsichtbares Leerzeichen ohne Breite: dort, wo im Satz kein Wortabstand
+% steht und Leser trotzdem einen brauchen -- zwischen zwei Spalten
+% ("EntwicklungPython"), nach Aufzählungszeichen und am Schriftwechsel nach
+% den Leads ("Prüfstandsdatenplattform:Von"). Ändert das Layout nicht.
+\newcommand{\cvrealspace}{\ifnum\XeTeXcharglyph"20>0
+    \rlap{\XeTeXglyph\XeTeXcharglyph"20\relax}\fi}
 \usepackage{tikz}
 \usetikzlibrary{calc}
 \usepackage{graphicx}
@@ -20,7 +62,32 @@
 \usepackage{paracol}
 \usepackage{setspace}
 \usepackage{ragged2e}
+% ragged2e hält im Flattersatz die Wortabstände starr, indem es bei jedem
+% Schriftwechsel \spaceskip auf den natürlichen Wortabstand setzt. Zusammen
+% mit echten Leerzeichen (\XeTeXinterwordspaceshaping=2, oben) stürzt XeTeX
+% 0.999993 dabei ab. Gleicher Effekt ohne \spaceskip:
+% Dehnung und Stauchung des Wortabstands in der Schrift selbst auf null setzen
+% (\fontdimen3/4). Der Wortabstand ist damit derselbe wie bei ragged2e.
+% Nebenwirkung: Die Änderung gilt für die ganze Satzlauf-Instanz der Schrift.
+% Unschädlich, weil die Briefe im Blocksatz vor dem Lebenslauf gesetzt werden
+% bzw. in eigenen Läufen (make dossier).
+\makeatletter
+\renewcommand{\@raggedtwoe@everyselectfont}{%
+    \spaceskip\z@
+    \if@raggedtwoe@spaceskip
+        \fontdimen3\font=\z@
+        \fontdimen4\font=\z@
+    \fi}
+\makeatother
 \usepackage{needspace}
+\usepackage{accsupp}
+
+% Textschicht für Bewerbungsportale. SmartRecruiters & Co.
+% lesen den Lebenslauf aus dem PDF aus. Ohne diese Zeile kamen gesperrte
+% Überschriften als "BER UFS E R FAH R UNG" und jeder Bindestrich als
+% geschützter Bindestrich (U+2011) an. \XeTeXgenerateactualtext legt zu
+% jedem Textstück den Originaltext ab; am Druckbild ändert sich nichts.
+\ifdefined\XeTeXgenerateactualtext\XeTeXgenerateactualtext=1\fi
 
 
 %-------------------------------------------------------------------------
@@ -89,20 +156,32 @@
 
 % Flatterrand statt Blocksatz: in schmalen Spalten erzeugt Blocksatz
 % Trennungskaskaden und Löcher. \RaggedRight erlaubt Trennung noch,
-% hält den Grauwert aber ruhig.
-\newcommand{\bodyflow}{\RaggedRight\hyphenpenalty=200}
+% hält den Grauwert aber ruhig. \cvbodyhyphenpenalty kann die Inhaltsdatei
+% überschreiben: 10000 schaltet die Trennung ab  --
+% getrennte Wörter kamen in Bewerbungsportalen als "Haushaltsvoll- zugs-
+% programm" an, weil die Portale den Text aus dem PDF auslesen.
+\providecommand{\cvbodyhyphenpenalty}{200}
+% Ohne Trennung dehnt \raggedright statt \RaggedRight: ragged2e lässt eine
+% Zeile vor einem langen Wort lieber überlaufen ("Prozessdokumentation"
+% ragte 13,6 pt in den Rand).
+\newcommand{\bodyflow}{\RaggedRight\hyphenpenalty=\cvbodyhyphenpenalty\relax
+    \ifnum\cvbodyhyphenpenalty<10000 \else\raggedright\fi}
 
 %-------------------------------------------------------------------------
 %  Icons
 %-------------------------------------------------------------------------
 
-\newcommand{\icoloc}{\faMapMarker*}
-\newcommand{\icophone}{\faPhone*}
-\newcommand{\icomail}{\faEnvelope}
-\newcommand{\icolinked}{\faLinkedin}
-\newcommand{\icocal}{\faBirthdayCake}
-\newcommand{\icoheart}{\faHeart}
-\newcommand{\icocar}{\faCar}
+% Die Symbolschrift hat keine Unicode-Zuordnung; ausgelesen wurde jedes
+% Symbol zu einem Störzeichen vor der Adresse oder Telefonnummer ("Ȱ", "Л").
+% \icotext gibt ihnen einen leeren Ersatztext -- Portale sehen nur die Angabe.
+\newcommand{\icotext}[1]{\BeginAccSupp{method=plain,ActualText={}}#1\EndAccSupp{}}
+\newcommand{\icoloc}{\icotext{\faMapMarker*}}
+\newcommand{\icophone}{\icotext{\faPhone*}}
+\newcommand{\icomail}{\icotext{\faEnvelope}}
+\newcommand{\icolinked}{\icotext{\faLinkedin}}
+\newcommand{\icocal}{\icotext{\faBirthdayCake}}
+\newcommand{\icoheart}{\icotext{\faHeart}}
+\newcommand{\icocar}{\icotext{\faCar}}
 
 %-------------------------------------------------------------------------
 %  Sechster Kontaktplatz — z.B. LinkedIn, GitHub oder der Führerschein.
@@ -121,6 +200,93 @@
 \providecommand{\cvextrasections}{}
 
 %-------------------------------------------------------------------------
+%  Master-Lebenslauf und optionale Bausteine.
+%
+%  Die Inhaltsdatei hält ALLE Angaben. Was im Dossier erscheint, steuert
+%  die meta.tex der Bewerbung:
+%      \cvshow{schluessel}   zeigt einen Baustein, der sonst wegbleibt
+%      \cvhide{schluessel}   lässt einen Baustein weg, der sonst erscheint
+%  Die Schlüssel stehen im Kopf von themes/cv-content.tex. application.tex
+%  und preview.tex definieren \cvshow und \cvhide, BEVOR sie die meta.tex
+%  lesen; hier stehen sie nur als Rückfallebene für andere Treiber.
+%
+%  In der Inhaltsdatei:
+%      \cvopt{schluessel}{...}        nur mit \cvshow oder im Master
+%      \cvstd{schluessel}{...}        immer, ausser mit \cvhide (im Master immer)
+%      \cvifopt{schluessel}{dann}{sonst}
+%  \def\cvmaster{} (make cv-master über templates/cv-master.tex) zeigt
+%  alles: Das ist der Master-Lebenslauf, aus dem je Stelle reduziert wird.
+%-------------------------------------------------------------------------
+\providecommand{\cvshow}[1]{\expandafter\def\csname cvshow@#1\endcsname{}}
+\providecommand{\cvhide}[1]{\expandafter\def\csname cvhide@#1\endcsname{}}
+\newcommand{\cvifopt}[3]{\ifdef{\cvmaster}{#2}{\ifcsdef{cvshow@#1}{#2}{#3}}}
+\newcommand{\cvopt}[2]{\cvifopt{#1}{#2}{}}
+\newcommand{\cvstd}[2]{\ifdef{\cvmaster}{#2}{\ifcsdef{cvhide@#1}{}{#2}}}
+
+%-------------------------------------------------------------------------
+%  Achter Kontaktplatz: GitHub (Schlüssel github in der
+%  Inhaltsdatei, gedacht für Software- und Datenstellen). Leer gelassen
+%  erscheint er in keinem Theme.
+%-------------------------------------------------------------------------
+\providecommand{\CVgithubtext}{}
+\providecommand{\CVgithuburl}{}
+\newcommand{\icogithub}{\icotext{\faGithub}}
+\newcommand{\cvgithub}{\ifdefempty{\CVgithuburl}{\CVgithubtext}{\href{\CVgithuburl}{\CVgithubtext}}}
+
+%-------------------------------------------------------------------------
+%  Haken für einen Abschnitt direkt nach der Berufserfahrung (z.B. "Open Source & Projekte"). Leer = kein Abschnitt. Jedes
+%  Theme ruft ihn in \makecvbody auf.
+%-------------------------------------------------------------------------
+\providecommand{\cvprojectsection}{}
+
+%-------------------------------------------------------------------------
+%  Zwischenüberschrift innerhalb einer Station (z.B. "Entwicklung" und
+%  "Versuch & Prüfung"). Steht zwischen
+%  zwei cvbullets-Listen und bleibt mit dem ersten Punkt darunter zusammen.
+%  Vorgabe für alle Themes; kompakt setzt eine eigene Fassung.
+%-------------------------------------------------------------------------
+\providecommand{\cvsubhead}[1]{%
+    \par\Needspace*{5\baselineskip}\addvspace{4pt}%
+    {\nohyph\mediumfont #1}\par\nopagebreak
+}
+
+%-------------------------------------------------------------------------
+%  Siebter Kontaktplatz — Nationalität und Bewilligung. In der Schweiz
+%  gehört die Angabe bei ausländischen Bewerbenden in die Personalien
+%  (Aufenthaltsbewilligung B/C, für Liechtenstein die Grenzgänger-
+%  bewilligung). Leer gelassen erscheint die Zeile nicht. 
+%-------------------------------------------------------------------------
+\providecommand{\CVnationality}{}
+\newcommand{\icoflag}{\icotext{\faPassport}}
+
+%-------------------------------------------------------------------------
+%  Neunter Kontaktplatz — Bewilligung als eigener Platz:
+%  "Deutsch, Niederlassungsbewilligung C" in einem Platz lief im Kompakt-
+%  Theme bis in den GitHub-Platz daneben. Mit \CVpermit stehen Nationalität
+%  und Bewilligung getrennt. Leer gelassen bleibt alles wie bisher.
+%-------------------------------------------------------------------------
+\providecommand{\CVpermit}{}
+\newcommand{\icopermit}{\icotext{\faIdCard}}
+
+%-------------------------------------------------------------------------
+%  Schrift des Brieftexts. Voreinstellung: die \normalsize des Themes,
+%  also dieselbe Grösse wie der Lebenslauf. Die Inhaltsdatei kann den
+%  Brief grösser setzen — bei Briefen von 200 bis 300 Wörtern bleibt die
+%  Seite in 9,4 pt sonst zur Hälfte leer . Wird am Ende
+%  von \makeletterhead ausgeführt, nach dem \parskip des Themes.
+%-------------------------------------------------------------------------
+\providecommand{\letterbodyfont}{}
+
+%-------------------------------------------------------------------------
+%  Unterschrift als Bild. Leer = keine. Die Briefe rufen \lettersignature
+%  zwischen Grussformel und Namen auf; ohne Bild bleibt nur der Abstand.
+%-------------------------------------------------------------------------
+\providecommand{\CVsignature}{}
+\newcommand{\lettersignature}{%
+    \ifdefempty{\CVsignature}{\vspace{0.3cm}}{%
+        \par\vspace{2pt}\noindent\includegraphics[height=0.95cm]{\CVsignature}\par\vspace{1pt}}}
+
+%-------------------------------------------------------------------------
 %  Bild-Helfer
 %-------------------------------------------------------------------------
 % Quadratischer Ausschnitt mit abgerundeten Ecken.
@@ -132,11 +298,9 @@
 %   \CVphotoshift  Motivversatz; negativ schiebt das Bild nach unten,
 %                  das Gesicht rutscht also von oben in die Mitte
 \providecommand{\CVphotozoom}{1}
-%                  Ein Versatz braucht einen Zoom von mindestens 1 + 2 x Versatz,
-%                  sonst deckt das Bild den Rahmen nicht und eine Kante wirkt abgeschnitten.
+\providecommand{\CVphotoshift}{0}
 %   \CVphotomirror 1 = wie aufgenommen, -1 = seitenverkehrt (damit die Person zum
 %                  Text hin blickt, wenn das Foto rechts steht)
-\providecommand{\CVphotoshift}{0}
 \providecommand{\CVphotomirror}{1}
 \newcommand{\photobox}[2]{%
     \begin{tikzpicture}
@@ -189,3 +353,54 @@
 %-------------------------------------------------------------------------
 \usepackage[hidelinks, bookmarks=false, unicode]{hyperref}
 \urlstyle{same}
+
+%-------------------------------------------------------------------------
+%  Weitere optionale Angaben. Leer gelassen erscheinen sie nirgends.
+%    \CVkeywords      Stichwortzeile unter dem Titel (kompakt, rueckgrat)
+%    \CVwebtext/-url  eigene Website als weiterer Link (rueckgrat)
+%    \CVphotoaspect   Höhe des Fotos im Verhältnis zur Breite (rueckgrat),
+%                     1 = quadratisch, 1.25 = Hochformat 4:5
+%-------------------------------------------------------------------------
+\providecommand{\CVkeywords}{}
+\providecommand{\CVwebtext}{}
+\providecommand{\CVweburl}{}
+\newcommand{\cvweb}{\ifdefempty{\CVweburl}{\CVwebtext}{\href{\CVweburl}{\CVwebtext}}}
+\providecommand{\CVphotoaspect}{1}
+
+\providecommand{\LblProjects}{Projekte}
+\providecommand{\LblReferences}{Referenzen}
+\providecommand{\LblEnclosures}{Beilagen}
+\providecommand{\LblContents}{Inhalt}
+\providecommand{\LblApplicationAs}{Bewerbung als}
+\providecommand{\LblCoverLetter}{Anschreiben}
+\providecommand{\LblMotivation}{Motivationsschreiben}
+
+%-------------------------------------------------------------------------
+%  Beilagenzeile am Ende des Anschreibens. Erscheint nur, wenn die meta.tex
+%  \newcommand{\enclosures}{Lebenslauf, Arbeitszeugnisse, Diplome} setzt.
+%-------------------------------------------------------------------------
+\newcommand{\letterenclosures}{\ifdefined\enclosures
+    \par\vspace{0.5cm}\noindent{\metafont\color{muted}\LblEnclosures: \enclosures}\par\fi}
+
+%-------------------------------------------------------------------------
+%  Deckblatt (\cvshow{coverpage} in der meta.tex): Briefkopf des Themes,
+%  die Zielstelle in der Seitenmitte, unten das Inhaltsverzeichnis des
+%  Dossiers. \coverpagecontents setzt application.tex je nach Schaltern.
+%-------------------------------------------------------------------------
+\providecommand{\coverpagecontents}{\LblCV}
+% Grösse der Zielstelle auf dem Deckblatt, vom Theme überschreibbar
+\providecommand{\coverpagetitlesize}{\fontsize{24pt}{29pt}\selectfont}
+\newcommand{\makecoverpage}{%
+    \makeletterhead
+    \setlength{\parskip}{0pt}%
+    \vspace*{\fill}%
+    \noindent{\metafont\color{muted}\MakeUppercase{\LblApplicationAs}}\par\vspace{8pt}%
+    \noindent{\nohyph\displayfont\coverpagetitlesize\color{headercolor}\positionname\par}%
+    \vspace{6pt}%
+    \noindent{\fontsize{13pt}{17pt}\selectfont\companyname\par}%
+    \vspace*{\fill}\vspace*{\fill}%
+    \noindent{\metafont\color{muted}\MakeUppercase{\LblContents}}\par\vspace{4pt}%
+    \noindent{\color{rule}\rule{\linewidth}{0.5pt}}\par\vspace{6pt}%
+    \noindent\coverpagecontents\par
+    \newpage
+}
