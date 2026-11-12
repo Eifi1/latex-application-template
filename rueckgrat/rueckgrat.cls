@@ -2,6 +2,7 @@
 %% One class for CV (Lebenslauf), letter (Anschreiben) and cover page (Deckblatt).
 %% Compile with XeLaTeX (MiKTeX or TeX Live), two runs. See LIESMICH.txt.
 %% Normally you only edit lebenslauf.tex and anschreiben.tex, not this file.
+%% Author: Markus Neusinger, github.com/MarkusNeusinger, anyplot.ai
 %%
 %% Options
 %%   cv | brief | deckblatt   document type (default cv)

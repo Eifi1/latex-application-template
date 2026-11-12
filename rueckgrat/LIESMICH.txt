@@ -1,5 +1,6 @@
 ﻿BEWERBUNGSVORLAGE: LEBENSLAUF UND ANSCHREIBEN IN LATEX
 Beispiel «Max Mustermann». Alle Angaben im Beispiel sind erfunden.
+Autor der Vorlage: Markus Neusinger, github.com/MarkusNeusinger, anyplot.ai
 
 
 WAS IST DRIN

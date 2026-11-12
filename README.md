@@ -22,6 +22,7 @@ Im Ordner [`rueckgrat/`](rueckgrat/) liegt eine eigenständige zweite Vorlage, u
 - Anleitung: [`rueckgrat/LIESMICH.txt`](rueckgrat/LIESMICH.txt)
 - Bauen unter Linux oder macOS: `make rueckgrat`. Unter Windows mit MiKTeX: Doppelklick auf `rueckgrat/build.cmd`.
 - Der Ordner ist in sich vollständig (Klasse, Schrift, Platzhalter für Foto und Unterschrift) und lässt sich einzeln kopieren.
+- Autor: Markus Neusinger ([GitHub](https://github.com/MarkusNeusinger), [anyplot.ai](https://anyplot.ai))
 
 ## Struktur
 
@@ -145,3 +146,10 @@ git merge template/main   # Konflikte entstehen meist nur in den Inhaltsdateien
 ```
 
 Eigene Bewerbungen gehören nie in dieses Template-Repo, sondern ins private Repo.
+
+## Autoren
+
+| Vorlage | Autor | Links |
+|---|---|---|
+| Layouts `kompakt`, `sidebar`, `akzent` | Marcel Eifert | [GitHub](https://github.com/Eifi1), [LinkedIn](https://www.linkedin.com/in/marcel-eifert-089580275/) |
+| Vorlage `rueckgrat` | Markus Neusinger | [GitHub](https://github.com/MarkusNeusinger), [anyplot.ai](https://anyplot.ai) |
