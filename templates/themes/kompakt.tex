@@ -157,36 +157,40 @@
 %  Kopf des Lebenslaufs
 %-------------------------------------------------------------------------
 
+% Kontaktangaben in zwei Spalten, links unter Name und Titel. Das Foto steht rechts und
+% läuft über die ganze Kopfhöhe. \photowide ist seine Kantenlänge: 3.9 cm passt zu drei
+% Kontaktzeilen, mit einer vierten Zeile (z.B. Nationalität, Bewilligung) sind es 4.5 cm.
+\newlength{\photowide}\setlength{\photowide}{3.9cm}
 \newcommand{\cbox}[2]{%
-    \begin{minipage}[t]{0.333\linewidth}\vtopsafe\metafont\color{muted}
+    \begin{minipage}[t]{0.5\linewidth}\vtopsafe\metafont\color{muted}
         \strut#1~~#2\end{minipage}%
 }
 
 \newcommand{\contactgrid}{%
     \noindent
     \cbox{\icoloc}{\CVaddress}%
-    \cbox{\icophone}{\CVphone}%
-    \cbox{\icomail}{\href{mailto:\CVmail}{\CVmail}}\par\vspace{3pt}
+    \cbox{\icophone}{\CVphone}\par\vspace{3pt}
     \noindent
-    \cbox{\CVlinkicon}{\cvlink}%
+    \cbox{\icomail}{\href{mailto:\CVmail}{\CVmail}}%
+    \cbox{\CVlinkicon}{\cvlink}\par\vspace{3pt}
+    \noindent
     \cbox{\icocal}{\CVbirth}%
     \cbox{\icoheart}{\CVcivil}\par
 }
 
 \newcommand{\makecvheader}{%
     \noindent
-    \begin{minipage}[b]{\dimexpr\linewidth-3.9cm\relax}
+    \begin{minipage}[b]{\dimexpr\linewidth-\photowide-0.7cm\relax}
         {\namefont\nohyph\color{ink}\CVname}\par\vspace{6pt}
-        {\rolelabelfont\color{accent}\MakeUppercase{\CVrole}}
+        {\rolelabelfont\color{accent}\MakeUppercase{\CVrole}}\par\vspace{9pt}
+        \noindent{\color{rule}\rule{\linewidth}{0.5pt}}\par\vspace{6pt}
+        \contactgrid
     \end{minipage}%
     \hfill
-    \begin{minipage}[b]{3.4cm}
-        \raggedleft\photobox{3.4cm}{6pt}
+    \begin{minipage}[b]{\photowide}
+        \raggedleft\photobox{\photowide}{7pt}
     \end{minipage}
-    \par\vspace{9pt}
-    \noindent{\color{rule}\rule{\linewidth}{0.5pt}}\par\vspace{6pt}
-    \contactgrid
-    \par\vspace{9pt}
+    \par\vspace{11pt}
     % Kurzprofil, links geklammert von einer Akzentlinie. Der Text wird
     % zuerst in eine Box gesetzt, dann bekommt die Linie deren gemessene
     % Höhe: eine fest gesetzte Länge würde je nach Textmenge über den

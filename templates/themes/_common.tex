@@ -132,7 +132,12 @@
 %   \CVphotoshift  Motivversatz; negativ schiebt das Bild nach unten,
 %                  das Gesicht rutscht also von oben in die Mitte
 \providecommand{\CVphotozoom}{1}
+%                  Ein Versatz braucht einen Zoom von mindestens 1 + 2 x Versatz,
+%                  sonst deckt das Bild den Rahmen nicht und eine Kante wirkt abgeschnitten.
+%   \CVphotomirror 1 = wie aufgenommen, -1 = seitenverkehrt (damit die Person zum
+%                  Text hin blickt, wenn das Foto rechts steht)
 \providecommand{\CVphotoshift}{0}
+\providecommand{\CVphotomirror}{1}
 \newcommand{\photobox}[2]{%
     \begin{tikzpicture}
         \pgfmathsetlengthmacro{\pbhalf}{0.5*#1}
@@ -140,7 +145,7 @@
         \pgfmathsetlengthmacro{\pbshift}{\CVphotoshift*#1}
         \clip[rounded corners=#2] (-\pbhalf,-\pbhalf) rectangle (\pbhalf,\pbhalf);
         \node[anchor=center, inner sep=0] at (0,\pbshift)
-            {\includegraphics[width=\pbwide]{\CVphoto}};
+            {\scalebox{\CVphotomirror}[1]{\includegraphics[width=\pbwide]{\CVphoto}}};
     \end{tikzpicture}%
 }
 

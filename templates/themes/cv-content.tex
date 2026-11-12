@@ -21,6 +21,8 @@
 % \CVphotoshift verschiebt das Motiv vertikal (negativ = nach unten).
 \renewcommand{\CVphotozoom}{1}
 \renewcommand{\CVphotoshift}{0}
+% Foto spiegeln, damit die Person zum Text hin blickt: -1 (Voreinstellung 1)
+\renewcommand{\CVphotomirror}{1}
 \newcommand{\CVaddress}{Musterstrasse 1, 8000 Zürich}
 % Ort für die Datumszeile der Briefe
 \newcommand{\CVcity}{Zürich}
@@ -47,13 +49,13 @@ sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
 \begin{cvexperience}
 
 \cvrole{Entwicklungsingenieur}{Muster Technik AG}{Zürich, Schweiz}{03/2020 -- heute}
-\cvnote{Optionale Notizzeile, z.B. frühere Funktion im selben Unternehmen}
+\cvnote{Optionale Notizzeile, z.B. frühere Funktion im selben Unternehmen oder Austrittsgrund}
 \begin{cvbullets}
     \item \lead{Auslegung:} Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
     sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat
     \item \lead{Versuch:} At vero eos et accusam et justo duo dolores et ea rebum --
     Stet clita kasd gubergren, no sea takimata sanctus est
-    \item \lead{Auswertung:} Automatisierte Auswertung mit Python; lorem ipsum dolor
+    \item \lead{Auswertung:} Automatisierte Auswertung mit Python, lorem ipsum dolor
     sit amet, consetetur sadipscing elitr
 \end{cvbullets}
 
@@ -61,7 +63,7 @@ sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
 \begin{cvbullets}
     \item \lead{Prüfstände:} Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
     sed diam nonumy eirmod tempor invidunt ut labore
-    \item \lead{Messtechnik:} Kraft-, Weg- und Temperaturmesstechnik; at vero eos et
+    \item \lead{Messtechnik:} Kraft-, Weg- und Temperaturmesstechnik, at vero eos et
     accusam et justo duo dolores
 \end{cvbullets}
 
@@ -131,5 +133,5 @@ sadipscing elitr}
 
 \renewcommand{\cvextrasections}{%
     \cvsection{Referenzen}
-    \cvfact{}{Auf Anfrage}%
+    \cvfact{}{Referenzen werden auf Nachfrage gerne mitgeteilt.}%
 }

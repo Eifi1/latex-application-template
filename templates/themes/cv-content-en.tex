@@ -36,6 +36,8 @@
 \newcommand{\CVphoto}{images/platzhalter.png}
 \renewcommand{\CVphotozoom}{1}
 \renewcommand{\CVphotoshift}{0}
+% Mirror the photo so the person faces the text: -1 (default 1)
+\renewcommand{\CVphotomirror}{1}
 \newcommand{\CVaddress}{Musterstrasse 1, 8000 Zurich}
 \newcommand{\CVcity}{Zurich}
 \newcommand{\CVphone}{+41 79 000 00 00}
@@ -60,13 +62,13 @@ consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore.%
 \begin{cvexperience}
 
 \cvrole{Development Engineer}{Muster Technik AG}{Zurich, Switzerland}{03/2020 -- present}
-\cvnote{Optional note line, e.g. an earlier role at the same employer}
+\cvnote{Optional note line, e.g. an earlier role at the same employer or the reason for leaving}
 \begin{cvbullets}
     \item \lead{Design:} Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
     sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat
     \item \lead{Testing:} At vero eos et accusam et justo duo dolores et ea rebum --
     Stet clita kasd gubergren, no sea takimata sanctus est
-    \item \lead{Evaluation:} Automated evaluation in Python; lorem ipsum dolor
+    \item \lead{Evaluation:} Automated evaluation in Python, lorem ipsum dolor
     sit amet, consetetur sadipscing elitr
 \end{cvbullets}
 
@@ -74,7 +76,7 @@ consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore.%
 \begin{cvbullets}
     \item \lead{Test rigs:} Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
     sed diam nonumy eirmod tempor invidunt ut labore
-    \item \lead{Instrumentation:} Force, displacement and temperature measurement;
+    \item \lead{Instrumentation:} Force, displacement and temperature measurement,
     at vero eos et accusam et justo duo dolores
 \end{cvbullets}
 
@@ -137,5 +139,5 @@ sadipscing elitr}
 
 \renewcommand{\cvextrasections}{%
     \cvsection{References}
-    \cvfact{}{Available on request}%
+    \cvfact{}{References available on request.}%
 }

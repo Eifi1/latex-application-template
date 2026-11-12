@@ -8,7 +8,7 @@ Alle Inhalte sind Blindtext der fiktiven Person „Max Muster“. Sie werden dur
 
 | Theme | Gestaltung |
 |---|---|
-| `kompakt` | einspaltig, Datumsleiste links, feine Linien |
+| `kompakt` | einspaltig, Datumsleiste links, feine Linien, Kontaktangaben zweispaltig neben dem Foto |
 | `sidebar` | zweispaltig, getönte Seitenleiste mit Kontakt, Profil und Sprachen, Schlagwort-Chips |
 | `akzent` | dunkles Kopfband mit Foto, Zeitachse |
 
@@ -51,7 +51,7 @@ Fertig gebaute Beispiele liegen in [`vorschau/`](vorschau/) — dasselbe Blindte
 
 ## Erste Schritte
 
-1. Eigene Angaben in `templates/themes/cv-content.tex` eintragen und das Foto nach `images/` legen (Pfad in `\CVphoto`).
+1. Eigene Angaben in `templates/themes/cv-content.tex` eintragen und das Foto nach `images/` legen (Pfad in `\CVphoto`). Mit `\CVphotomirror{-1}` erscheint das Foto seitenverkehrt, damit die Person zum Text hin blickt. Die Kantenlänge des Fotos im Layout `kompakt` steht in `\photowide` (`kompakt.tex`).
 2. Mit `make themes` die drei Layouts vergleichen und das gewählte in `templates/application.tex` setzen:
    ```latex
    \providecommand{\cvtheme}{kompakt}   % kompakt | sidebar | akzent
