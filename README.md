@@ -82,6 +82,7 @@ make cv                     # nur der Lebenslauf -> build/cv.pdf
 make feedback               # Feedback-Dokument bauen + ablegen
 make themes                 # Dossier in allen vier Layouts -> build/theme-*.pdf
 make cv-master              # Lebenslauf mit allen Bausteinen -> build/cv-master.pdf
+make dossier APP=<ordner>   # einzelne Dateien für Portale: Anschreiben_, Lebenslauf_, Bewerbung_ ...
 make theme-sidebar          # ein Layout bauen und öffnen
 make view                   # bauen + öffnen
 make watch                  # bei jeder Änderung neu bauen (inotify-tools)
@@ -186,6 +187,8 @@ Dazu kommen Schalter, die in der `meta.tex` als Befehl gesetzt werden:
 | `\newcommand{\cvsummaryoverride}{...}` | eigenes Kurzprofil für diese Bewerbung |
 | `\newcommand{\cvskillsoverride}{\cvfact{..}{..}}` | eigene Kompetenzzeilen für diese Bewerbung |
 | `\newcommand{\cvheaderclassic}{}` | kompakt: früherer Kopf mit dreispaltigen Kontaktangaben |
+
+`make dossier APP=<ordner>` legt das Dossier zusätzlich als einzelne Dateien im Bewerbungsordner ab (Anschreiben, Motivationsschreiben, Lebenslauf, Gesamtdossier), wie es Bewerbungsportale verlangen. Liegen PDF unter `beilagen/`, kommen sie als Zeugnisse dazu. `\newcommand{\lettersinone}{}` in der `meta.tex` fasst beide Briefe in einer Datei zusammen, `PERSON=Vorname_Nachname` setzt den Namen in den Dateinamen.
 
 Und Einstellungen in der Inhaltsdatei: `\CVphotomirror` (Foto spiegeln), `\CVphotozoom` und `\CVphotoshift` (Bildausschnitt), `\CVphotoaspect` (Hochformat, nur rueckgrat), `\CVsignature` (Unterschrift als Bild im Brief).
 

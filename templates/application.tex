@@ -75,15 +75,18 @@
 
 % Die Briefe stehen in einer Gruppe, damit Briefschrift und Absatzabstand
 % nicht in den Lebenslauf laufen.
+% \coveronly und \motivationonly (von "make dossier" gesetzt) bauen nur einen der Briefe.
 \newcommand{\dossierletters}{%
     \begingroup
-    \makeletterhead
-    \input{\letterdir/cover-letter}
-    \ifdefined\nomotivation\else
-        \newpage
+    \ifdefined\motivationonly\else
+        \makeletterhead
+        \input{\letterdir/cover-letter}
+    \fi
+    \ifdefined\nomotivation\else\ifdefined\coveronly\else
+        \ifdefined\motivationonly\else\newpage\fi
         \makeletterhead
         \input{\letterdir/motivation}
-    \fi
+    \fi\fi
     \newpage
     \endgroup
 }
@@ -100,9 +103,12 @@
 
 \begin{document}
 
-\cvopt{coverpage}{\begingroup\makecoverpage\endgroup}
+\ifdefined\letteronly\else\cvopt{coverpage}{\begingroup\makecoverpage\endgroup}\fi
 
-\ifdefined\cvonly
+\ifdefined\letteronly
+    % nur die Briefe, ohne Lebenslauf (von "make dossier" gesetzt)
+    \dossierletters
+\else\ifdefined\cvonly
     \makecvbody
 \else\ifdefined\lettersfirst
     \dossierletters
@@ -113,6 +119,6 @@
     \makecvbody
     \newpage
     \dossierletters
-\fi\fi
+\fi\fi\fi
 
 \end{document}
