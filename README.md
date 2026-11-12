@@ -143,5 +143,5 @@ Eigene Bewerbungen gehören nie in dieses Template-Repo, sondern ins private Rep
 
 | Vorlage | Autor | Links |
 |---|---|---|
-| Layouts `kompakt`, `sidebar`, `akzent` | Marcel Eifert | [GitHub](https://github.com/Eifi1), [LinkedIn](https://www.linkedin.com/in/marcel-eifert-089580275/) |
+| Layouts `kompakt`, `sidebar`, `akzent` | Marcel Eifert | [GitHub](https://github.com/Eifi1), [LinkedIn](https://www.linkedin.com/in/marcel-eifert/) |
 | Layout `rueckgrat` | Gestaltung Markus Neusinger, als Theme umgesetzt von Marcel Eifert | [GitHub](https://github.com/MarkusNeusinger), [anyplot.ai](https://anyplot.ai) |
