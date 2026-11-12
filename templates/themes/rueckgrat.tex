@@ -1,0 +1,284 @@
+%=========================================================================
+%  THEME 4 — "RUECKGRAT"
+%
+%  Eine senkrechte Linie läuft als Rückgrat durch jede Seite. Links davon
+%  stehen rechtsbündig Daten, Abschnittstitel und Schlüssel, rechts der
+%  Text. Grüne Knoten auf der Linie markieren die Abschnitte. Gesetzt in
+%  JetBrains Mono, einer Schrift mit fester Zeichenbreite.
+%
+%  Gestaltung: Markus Neusinger (github.com/MarkusNeusinger, anyplot.ai),
+%  ursprünglich als eigene Dokumentklasse rueckgrat.cls. Hier als Theme
+%  umgesetzt, das dieselben Inhaltsdateien liest wie die anderen Layouts.
+%
+%  Die linke Spalte fasst rund 22 Zeichen je Zeile. Eine längere
+%  E-Mail-Adresse ragt über die Linie: dann \rgcolL unten vergrössern.
+%=========================================================================
+
+% Masse des Rasters: linker Seitenrand, linke Spalte, Abstand zur Textspalte
+\newlength{\rgmarginleft}\setlength{\rgmarginleft}{15mm}
+\newlength{\rgcolL}\setlength{\rgcolL}{37mm}
+\newlength{\rgcolG}\setlength{\rgcolG}{6mm}
+\newlength{\rgpull}\setlength{\rgpull}{\dimexpr\rgcolL+\rgcolG\relax}
+\newlength{\rgphotow}\setlength{\rgphotow}{32mm}
+
+% Der Satzspiegel ist die Textspalte. Die linke Spalte steht im Seitenrand.
+\usepackage[left=58mm, right=18mm, top=18mm, bottom=20mm,
+            headheight=12.5pt, headsep=5mm, footskip=9mm]{geometry}
+
+\input{templates/themes/_common.tex}
+\usepackage{eso-pic}
+
+% Flatterrand mit wenig Trennungen: In einer Schrift mit fester Zeichenbreite fallen
+% Trennstriche stärker auf als kurze Zeilen.
+\renewcommand{\bodyflow}{\RaggedRight\hyphenpenalty=1000}
+
+%-------------------------------------------------------------------------
+%  Farben — Grün nur für Knoten, nie für Text
+%-------------------------------------------------------------------------
+
+\definecolor{ink}{HTML}{1A1A17}      % Name, Titel der Einträge
+\definecolor{inksoft}{HTML}{4A4A44}  % Fliesstext
+\definecolor{muted}{HTML}{67665F}    % Daten, Schlüssel, Kontakt
+\definecolor{rule}{HTML}{D9D8D1}     % Haarlinien
+\definecolor{accent}{HTML}{009E73}   % Knoten auf dem Rückgrat
+
+% Kompatibilität zu den bestehenden Brief-Dateien
+\colorlet{headercolor}{ink}
+\colorlet{linecolor}{ink}
+
+%-------------------------------------------------------------------------
+%  Schrift — JetBrains Mono NL (SIL Open Font License, fonts/OFL-JetBrainsMono.txt)
+%-------------------------------------------------------------------------
+
+\setmainfont{JetBrainsMonoNL}[
+    Path = fonts/, Extension = .ttf,
+    UprightFont    = *-Regular,
+    ItalicFont     = *-Italic,
+    BoldFont       = *-SemiBold,
+    BoldItalicFont = *-BoldItalic]
+% \sffamily muss dieselbe Schrift liefern — die Briefdateien verwenden es
+\setsansfont{JetBrainsMonoNL}[
+    Path = fonts/, Extension = .ttf,
+    UprightFont = *-Regular, ItalicFont = *-Italic, BoldFont = *-SemiBold]
+\newfontfamily\displayfont{JetBrainsMonoNL}[
+    Path = fonts/, Extension = .ttf, UprightFont = *-SemiBold]
+\newfontfamily\mediumfont{JetBrainsMonoNL}[
+    Path = fonts/, Extension = .ttf, UprightFont = *-Medium, ItalicFont = *-MediumItalic]
+
+% Grundschriftgrad des Dokuments
+\makeatletter
+\renewcommand\normalsize{\@setfontsize\normalsize{9.3}{12.9}}
+\makeatother
+\AtBeginDocument{\normalsize\color{inksoft}}
+
+\newcommand{\namefont}{\mediumfont\fontsize{25pt}{29pt}\selectfont}
+\newcommand{\rolelabelfont}{\fontsize{11pt}{15pt}\selectfont}
+\newcommand{\metafont}{\fontsize{7.8pt}{11pt}\selectfont}
+\newcommand{\datefont}{\fontsize{7.8pt}{11pt}\selectfont}
+\newcommand{\rolefont}{\displayfont\fontsize{10pt}{13.2pt}\selectfont}
+\newcommand{\orgfont}{\fontsize{9.3pt}{12.9pt}\selectfont\color{muted}}
+\newcommand{\notefont}{\fontsize{8pt}{11pt}\selectfont\itshape}
+\newcommand{\labelfont}{\mediumfont\fontsize{8.6pt}{11pt}\selectfont
+    \addfontfeature{LetterSpace=2.5}}
+\newcommand{\lead}[1]{{\mediumfont#1}}
+
+% Grundlinien-Schutz, siehe kompakt.tex
+\newcommand{\vtopsafe}{\leavevmode}
+
+%-------------------------------------------------------------------------
+%  Linke Spalte, Knoten, Rückgrat
+%-------------------------------------------------------------------------
+
+% Inhalt der linken Spalte am Anfang der laufenden Zeile, rechtsbündig. Die Box
+% bekommt Höhe und Tiefe null, damit sie die Zeilenhöhe nie verändert.
+\newsavebox{\rglcbox}
+\newcommand{\rgleftcol}[1]{\leavevmode\sbox{\rglcbox}{\parbox[t]{\rgcolL}{%
+    \RaggedLeft\leavevmode #1}}%
+    \ht\rglcbox=0pt \dp\rglcbox=0pt \llap{\usebox{\rglcbox}\hspace{\rgcolG}}}
+
+% Grüner Knoten auf dem Rückgrat, mit weissem Hof: Die Linie scheint dahinter durchzulaufen
+\newcommand{\rgnode}{\rlap{\hspace{-0.5\rgcolG}\raisebox{0.3em}{\tikz[overlay]{%
+    \fill[white] (0,0) circle (4.3pt); \fill[accent] (0,0) circle (2.9pt);}}}}
+
+% Kleiner grauer Punkt als Aufzählungszeichen
+\newcommand{\rgdot}{\tikz[baseline=-0.5ex]\fill[muted] (0,0) circle (1.1pt);}
+
+% Das Rückgrat: eine senkrechte Linie durch jede Seite, hinter den Knoten
+\AddToShipoutPictureBG{\AtPageLowerLeft{%
+    \put(\LenToUnit{\dimexpr\rgmarginleft+\rgcolL+0.5\rgcolG-0.4pt\relax},\LenToUnit{9.5mm}){%
+        \color{ink}\rule{0.8pt}{\dimexpr\paperheight-9.5mm-\ifnum\value{page}>1 8.5mm\else 18mm\fi\relax}}}}
+
+%-------------------------------------------------------------------------
+%  Sektionen — Titel in der linken Spalte, Knoten auf der Linie
+%-------------------------------------------------------------------------
+
+\newcommand{\rglabel}[1]{\rgleftcol{\nohyph\labelfont\color{ink}#1}\rgnode}
+
+% Vor Einträgen und Fakten-Zeilen steht der Titel auf einer eigenen Zeile.
+\newcommand{\cvsection}[1]{%
+    \par\addvspace{14pt}%
+    \Needspace*{5\baselineskip}%
+    {\rglabel{#1}\strut\par}\nobreak\vspace{5pt}\nobreak
+}
+
+%-------------------------------------------------------------------------
+%  Einträge — Datum in der linken Spalte, Inhalt rechts.
+%  Die Einträge sind gewöhnliche Absätze und laufen über Seitenumbrüche.
+%-------------------------------------------------------------------------
+
+\newenvironment{cvexperience}{}{\par}
+
+\newcommand{\cvrole}[4]{%
+    \par\addvspace{7pt}%
+    \Needspace*{4\baselineskip}% Station nicht als Waise an den Seitenfuss
+    {\rgleftcol{\datefont\color{muted}#4}\nohyph\rolefont\color{ink}#1\par}\nobreak
+    {\leavevmode\cvorgline{#2}{#3}\par}\nobreak
+    \addvspace{1.5pt}%
+}
+
+\newcommand{\cvnote}[1]{{\bodyflow\notefont\color{muted}#1\par}\vspace{1pt}}
+
+\newcommand{\cvplain}[3]{%
+    \par\addvspace{7pt}%
+    \Needspace*{3\baselineskip}%
+    {\rgleftcol{\datefont\color{muted}#2}\nohyph\rolefont\color{ink}#1\par}\nobreak
+    {\bodyflow #3\par}%
+}
+
+\newenvironment{cvbullets}{%
+    \begin{itemize}[label=\rgdot, leftmargin=10pt, labelsep=5pt,
+                    itemsep=1.8pt, parsep=0pt, topsep=3pt, partopsep=0pt]
+        \bodyflow
+    }{\end{itemize}}
+
+%-------------------------------------------------------------------------
+%  Fakten-Zeilen (Kompetenzen, Sprachen) — Schlüssel klein in der linken Spalte
+%-------------------------------------------------------------------------
+
+\newcommand{\cvfact}[2]{%
+    \par{\rgleftcol{\metafont\color{muted}\MakeLowercase{#1}}\bodyflow #2\par}%
+    \addvspace{2.2pt}%
+}
+
+\newcommand{\cvtag}[1]{#1\quad}  % Chips braucht dieses Theme nicht
+
+%-------------------------------------------------------------------------
+%  Kopf des Lebenslaufs
+%-------------------------------------------------------------------------
+
+% Adresse am ersten Komma umbrechen: "Strasse 1, 8000 Ort" wird zweizeilig.
+\makeatletter
+\def\rg@split#1, #2\@nil{#1\ifx\relax#2\relax\else\newline\rg@strip#2\@nil\fi}
+\def\rg@strip#1, \@nil{#1}
+\newcommand{\rgaddress}{\expandafter\rg@split\CVaddress, \@nil}
+\makeatother
+
+% "geb." vor dem Geburtsdatum, englisch "born"
+\newcommand{\rgborn}{\ifdefstring{\cvlanguage}{ngerman}{geb.\ }{born\ }}
+
+% Reihenfolge im Textstrom (für Parser): Name, Titel, Link, Foto, dann die Kontaktspalte.
+% Die Kontaktspalte wird danach nach links zurückgeschoben.
+\newcommand{\makecvheader}{%
+    \noindent
+    \begin{minipage}[t]{\dimexpr\linewidth-\rgphotow-\rgcolG\relax}\vspace{0pt}%
+        \vspace{-3pt}{\namefont\nohyph\color{ink}\CVname\par}\vspace{2pt}%
+        {\rolelabelfont\color{inksoft}\CVrole\par}%
+        \vspace{39pt}%
+        {\metafont\color{muted}\cvlink\par}%
+    \end{minipage}%
+    \hspace{\rgcolG}%
+    \begin{minipage}[t]{\rgphotow}\vspace{0pt}%
+        \photobox{\rgphotow}{0pt}%
+    \end{minipage}%
+    \hspace*{-\dimexpr\linewidth+\rgpull\relax}%
+    \begin{minipage}[t]{\rgcolL}\vspace{0pt}\RaggedLeft
+        \vspace{28.6pt}% erste Kontaktzeile auf der Grundlinie des Titels
+        {\metafont\color{muted}%
+         \rgaddress\par
+         \rgborn\CVbirth\par
+         \CVcivil\par
+         \vspace{6pt}%
+         \CVphone\par
+         \href{mailto:\CVmail}{\CVmail}\par}%
+    \end{minipage}%
+    \par\vspace{12pt}%
+    % Profil: Der Titel teilt die Zeile mit dem Text
+    \Needspace*{4\baselineskip}%
+    {\rglabel{\LblProfile}\bodyflow\ContentSummary\par}%
+}
+
+%-------------------------------------------------------------------------
+%  Seitenstil — ab Seite 2 Name und Dokument im Kopf, Seitenzahl links unten
+%-------------------------------------------------------------------------
+
+\fancypagestyle{cvstyle}{%
+    \fancyhf{}
+    \fancyhfoffset[L]{\rgpull}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+    \fancyhead[L]{\metafont\color{muted}\makebox[\rgcolL][r]{\CVname}\hspace{\rgcolG}\LblCV}
+    \fancyfoot[L]{\metafont\color{muted}\makebox[\rgcolL][r]{\thepage}}
+}
+\fancypagestyle{cvfirst}{%
+    \fancyhf{}
+    \fancyhfoffset[L]{\rgpull}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+}
+
+%-------------------------------------------------------------------------
+%  Briefkopf (Anschreiben / Motivationsschreiben) — wie der Kopf des
+%  Lebenslaufs, ohne Foto und ohne persönliche Angaben
+%-------------------------------------------------------------------------
+
+\newcommand{\makeletterhead}{%
+    \pagestyle{cvfirst}\thispagestyle{cvfirst}%
+    \setlength{\parskip}{7.5pt}% Brieftext: Absätze durch Weissraum getrennt
+    \noindent
+    \begin{minipage}[t]{\linewidth}\vspace{0pt}\setlength{\parskip}{0pt}%
+        \vspace{-3pt}{\namefont\nohyph\color{ink}\CVname\par}\vspace{2pt}%
+        {\rolelabelfont\color{inksoft}\CVrole\par}%
+    \end{minipage}%
+    \hspace*{-\dimexpr\linewidth+\rgpull\relax}%
+    \begin{minipage}[t]{\rgcolL}\vspace{0pt}\RaggedLeft\setlength{\parskip}{0pt}%
+        \vspace{28.6pt}%
+        {\metafont\color{muted}%
+         \rgaddress\par
+         \CVphone\par
+         \href{mailto:\CVmail}{\CVmail}\par}%
+    \end{minipage}%
+    \par\vspace{14mm}%
+    \bodyflow % Brieftext im Flatterrand: Blocksatz reisst in dieser Schrift Löcher
+}
+
+% Zwischentitel im Brief: steht in der linken Spalte neben dem nächsten Absatz
+\newcommand{\lettersection}[1]{%
+    \par\addvspace{11pt}%
+    \everypar{\rglabel{#1}\everypar{}}%
+}
+
+%-------------------------------------------------------------------------
+%  Rumpf des Lebenslaufs
+%-------------------------------------------------------------------------
+
+\newcommand{\makecvbody}{%
+    \pagestyle{cvstyle}\thispagestyle{cvfirst}
+    \makecvheader
+
+    \cvsection{\LblSkills}
+    \ContentSkills
+
+    \cvsection{\LblExperience}
+    \ContentExperience
+
+    \cvsection{\LblEducation}
+    \ContentEducation
+
+    \cvsection{\LblFurther}
+    \ContentFurther
+
+    \cvsection{\LblLanguages}
+    \ContentLanguages
+
+    \cvextrasections
+}

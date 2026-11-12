@@ -1,6 +1,6 @@
 # LaTeX-Bewerbungen
 
-Ein LaTeX-Projekt, das Lebenslauf, Anschreiben und Motivationsschreiben als **ein PDF-Dossier** baut, dazu optional ein Feedback-Dokument nach dem Gespräch. Drei Layouts stehen zur Wahl, der Inhalt steht nur einmal da.
+Ein LaTeX-Projekt, das Lebenslauf, Anschreiben und Motivationsschreiben als **ein PDF-Dossier** baut, dazu optional ein Feedback-Dokument nach dem Gespräch. Vier Layouts stehen zur Wahl, der Inhalt steht nur einmal da.
 
 Alle Inhalte sind Blindtext der fiktiven Person „Max Muster“. Sie werden durch die eigenen Angaben ersetzt.
 
@@ -11,18 +11,9 @@ Alle Inhalte sind Blindtext der fiktiven Person „Max Muster“. Sie werden dur
 | `kompakt` | einspaltig, Datumsleiste links, feine Linien, Kontaktangaben zweispaltig neben dem Foto |
 | `sidebar` | zweispaltig, getönte Seitenleiste mit Kontakt, Profil und Sprachen, Schlagwort-Chips |
 | `akzent` | dunkles Kopfband mit Foto, Zeitachse |
+| `rueckgrat` | senkrechte Linie als Rückgrat, Daten und Abschnittstitel rechtsbündig links davon, gesetzt in JetBrains Mono |
 
-Fertig gebaute Beispiele liegen in [`vorschau/`](vorschau/) — dasselbe Blindtext-Dossier in jedem Layout. Mit `make themes` entsteht das eigene Dossier in allen drei Layouts unter `build/theme-*.pdf` zum Vergleichen.
-
-## Zweite Vorlage: `rueckgrat`
-
-Im Ordner [`rueckgrat/`](rueckgrat/) liegt eine eigenständige zweite Vorlage, unabhängig von den drei Layouts oben: Lebenslauf und Anschreiben mit einer eigenen Dokumentklasse (`rueckgrat.cls`), gesetzt in JetBrains Mono, mit einer senkrechten Linie als Rückgrat und der Datumsspalte links davon. Auch hier sind alle Inhalte Blindtext («Max Mustermann»).
-
-- Beispiele: [`rueckgrat/lebenslauf.pdf`](rueckgrat/lebenslauf.pdf), [`rueckgrat/anschreiben.pdf`](rueckgrat/anschreiben.pdf)
-- Anleitung: [`rueckgrat/LIESMICH.txt`](rueckgrat/LIESMICH.txt)
-- Bauen unter Linux oder macOS: `make rueckgrat`. Unter Windows mit MiKTeX: Doppelklick auf `rueckgrat/build.cmd`.
-- Der Ordner ist in sich vollständig (Klasse, Schrift, Platzhalter für Foto und Unterschrift) und lässt sich einzeln kopieren.
-- Autor: Markus Neusinger ([GitHub](https://github.com/MarkusNeusinger), [anyplot.ai](https://anyplot.ai))
+Fertig gebaute Beispiele liegen in [`vorschau/`](vorschau/) — dasselbe Blindtext-Dossier in jedem Layout. Mit `make themes` entsteht das eigene Dossier in allen vier Layouts unter `build/theme-*.pdf` zum Vergleichen.
 
 ## Struktur
 
@@ -37,12 +28,13 @@ Im Ordner [`rueckgrat/`](rueckgrat/) liegt eine eigenständige zweite Vorlage, u
 │       ├── _common.tex            # Pakete, Icons, Sprache, Hilfsmakros
 │       ├── cv-content.tex         # Lebenslauf-Inhalt (Deutsch), layoutneutral
 │       ├── cv-content-en.tex      # derselbe Inhalt auf Englisch
-│       ├── kompakt.tex            # die drei Layouts
+│       ├── kompakt.tex            # die vier Layouts
 │       ├── sidebar.tex
-│       └── akzent.tex
-├── fonts/                         # Archivo (SIL Open Font License)
+│       ├── akzent.tex
+│       └── rueckgrat.tex
+├── fonts/                         # Archivo, JetBrains Mono (SIL Open Font License)
 ├── images/platzhalter.png         # Foto — durch eigenes ersetzen
-├── vorschau/                      # Beispiel-PDFs der drei Layouts
+├── vorschau/                      # Beispiel-PDFs der vier Layouts
 └── applications/
     └── YYYY-MM-firma/             # ein Ordner pro Bewerbung
         ├── meta.tex               # Stelle, Firma, Adresse, Empfänger, Sprache
@@ -56,15 +48,15 @@ Im Ordner [`rueckgrat/`](rueckgrat/) liegt eine eigenständige zweite Vorlage, u
 
 - **TeX Live** (2020+), vollständige Installation (`texlive-full`) oder mindestens `fontawesome5`, `paracol`, `tikz`, `hyperref`, `microtype`
 - **XeLaTeX** (wegen `fontspec`)
-- Schriften **Inter** und **Source Sans Pro**: Beide sind in TeX Live enthalten (`inter`, `sourcesanspro`). Archivo liegt in `fonts/`.
+- Schriften **Inter** und **Source Sans Pro**: Beide sind in TeX Live enthalten (`inter`, `sourcesanspro`). Archivo und JetBrains Mono liegen in `fonts/`.
 - optional `inotify-tools` für `make watch`
 
 ## Erste Schritte
 
 1. Eigene Angaben in `templates/themes/cv-content.tex` eintragen und das Foto nach `images/` legen (Pfad in `\CVphoto`). Mit `\CVphotomirror{-1}` erscheint das Foto seitenverkehrt, damit die Person zum Text hin blickt. Die Kantenlänge des Fotos im Layout `kompakt` steht in `\photowide` (`kompakt.tex`).
-2. Mit `make themes` die drei Layouts vergleichen und das gewählte in `templates/application.tex` setzen:
+2. Mit `make themes` die vier Layouts vergleichen und das gewählte in `templates/application.tex` setzen:
    ```latex
-   \providecommand{\cvtheme}{kompakt}   % kompakt | sidebar | akzent
+   \providecommand{\cvtheme}{kompakt}   % kompakt | sidebar | akzent | rueckgrat
    ```
 
 ## Ablauf pro Bewerbung
@@ -87,7 +79,7 @@ make application            # Dossier bauen + im Bewerbungsordner ablegen
 make rebuild APP=<ordner>   # archivierte Bewerbung mit ihren eigenen Briefen neu bauen
 make cv                     # nur der Lebenslauf -> build/cv.pdf
 make feedback               # Feedback-Dokument bauen + ablegen
-make themes                 # Dossier in allen drei Layouts -> build/theme-*.pdf
+make themes                 # Dossier in allen vier Layouts -> build/theme-*.pdf
 make theme-sidebar          # ein Layout bauen und öffnen
 make view                   # bauen + öffnen
 make watch                  # bei jeder Änderung neu bauen (inotify-tools)
@@ -152,4 +144,4 @@ Eigene Bewerbungen gehören nie in dieses Template-Repo, sondern ins private Rep
 | Vorlage | Autor | Links |
 |---|---|---|
 | Layouts `kompakt`, `sidebar`, `akzent` | Marcel Eifert | [GitHub](https://github.com/Eifi1), [LinkedIn](https://www.linkedin.com/in/marcel-eifert-089580275/) |
-| Vorlage `rueckgrat` | Markus Neusinger | [GitHub](https://github.com/MarkusNeusinger), [anyplot.ai](https://anyplot.ai) |
+| Layout `rueckgrat` | Gestaltung Markus Neusinger, als Theme umgesetzt von Marcel Eifert | [GitHub](https://github.com/MarkusNeusinger), [anyplot.ai](https://anyplot.ai) |
