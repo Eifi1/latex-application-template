@@ -102,15 +102,11 @@ cv-master: $(BUILD_DIR)
 	$(XELATEX) -jobname=cv-master-en "\def\cvtheme{$(CVTHEME)}\def\cvmasteren{}\input{$(TEMPLATE_DIR)/cv-master.tex}" > /dev/null
 	@echo "  -> $(BUILD_DIR)/cv-master.pdf, $(BUILD_DIR)/cv-master-en.pdf"
 
-# Beispiel-PDFs im Ordner vorschau/ neu bauen: je Layout das Dossier (<layout>.pdf) und
-# der Master-Lebenslauf mit allen Bausteinen (master-<layout>.pdf).
+# Beispiel-PDFs im Ordner vorschau/ neu bauen: das Dossier in jedem Layout.
 vorschau: themes
 	@for t in $(THEMES); do \
 		cp $(BUILD_DIR)/theme-$$t.pdf vorschau/$$t.pdf; \
-		$(XELATEX) -jobname=master-$$t "\def\cvtheme{$$t}\input{$(TEMPLATE_DIR)/cv-master.tex}" > /dev/null && \
-		$(XELATEX) -jobname=master-$$t "\def\cvtheme{$$t}\input{$(TEMPLATE_DIR)/cv-master.tex}" > /dev/null || exit 1; \
-		cp $(BUILD_DIR)/master-$$t.pdf vorschau/master-$$t.pdf; \
-		echo "  -> vorschau/$$t.pdf, vorschau/master-$$t.pdf"; \
+		echo "  -> vorschau/$$t.pdf"; \
 	done
 
 # Feedback nach dem Gespräch bauen und ablegen

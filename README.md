@@ -13,7 +13,7 @@ Alle Inhalte sind Blindtext der fiktiven Person „Max Muster“. Sie werden dur
 | `akzent` | dunkles Kopfband mit Foto, Zeitachse |
 | `rueckgrat` | senkrechte Linie als Rückgrat, Daten und Abschnittstitel rechtsbündig links davon, gesetzt in JetBrains Mono |
 
-Fertig gebaute Beispiele liegen in [`vorschau/`](vorschau/) — dasselbe Blindtext-Dossier in jedem Layout. Daneben liegt je Layout ein `master-<layout>.pdf`: der Lebenslauf mit allen Bausteinen eingeschaltet. `make vorschau` baut beide Sätze neu. Mit `make themes` entsteht das eigene Dossier in allen vier Layouts unter `build/theme-*.pdf` zum Vergleichen.
+Fertig gebaute Beispiele liegen in [`vorschau/`](vorschau/) — dasselbe Blindtext-Dossier in jedem Layout. `make vorschau` baut sie neu. Mit `make themes` entsteht das eigene Dossier in allen vier Layouts unter `build/theme-*.pdf` zum Vergleichen.
 
 ## Struktur
 
@@ -144,7 +144,7 @@ Eigene Bewerbungen gehören nie in dieses Template-Repo, sondern ins private Rep
 
 ## Schalter
 
-Die Inhaltsdatei `themes/cv-content.tex` ist ein Master-Lebenslauf: Sie darf alles enthalten, was je in einem Lebenslauf stehen soll. Was eine Bewerbung davon zeigt, steuert ihre `meta.tex` mit Schaltern. `make cv-master` baut die vollständige Fassung mit allen Bausteinen (Beispiele je Layout: [`kompakt`](vorschau/master-kompakt.pdf), [`sidebar`](vorschau/master-sidebar.pdf), [`akzent`](vorschau/master-akzent.pdf), [`rueckgrat`](vorschau/master-rueckgrat.pdf)).
+Die Inhaltsdatei `themes/cv-content.tex` ist ein Master-Lebenslauf: Sie darf alles enthalten, was je in einem Lebenslauf stehen soll. Was eine Bewerbung davon zeigt, steuert ihre `meta.tex` mit Schaltern. `make cv-master` baut die vollständige Fassung mit allen Bausteinen.
 
 ```latex
 \cvshow{projects}     % Baustein dazu, der sonst wegbleibt
