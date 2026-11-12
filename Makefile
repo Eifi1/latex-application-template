@@ -71,6 +71,18 @@ theme-%: $(BUILD_DIR)
 	$(XELATEX) -jobname=theme-$* "\def\cvtheme{$*}\input{$(TEMPLATE_DIR)/application.tex}"
 	xdg-open $(BUILD_DIR)/theme-$*.pdf
 
+# Eigenständige Vorlage «rueckgrat» im Ordner rueckgrat/ (eigene Klasse, eigene Schrift,
+# unabhängig von templates/). Baut Lebenslauf und Anschreiben an Ort und Stelle.
+# Unter Windows mit MiKTeX: rueckgrat/build.cmd, siehe rueckgrat/LIESMICH.txt.
+rueckgrat:
+	@cd rueckgrat && for d in lebenslauf anschreiben; do \
+		echo "=== rueckgrat/$$d ==="; \
+		xelatex -interaction=nonstopmode -halt-on-error $$d.tex > /dev/null && \
+		xelatex -interaction=nonstopmode -halt-on-error $$d.tex > /dev/null || exit 1; \
+		rm -f $$d.aux $$d.log $$d.out; \
+		echo "  -> rueckgrat/$$d.pdf"; \
+	done
+
 view: application
 	xdg-open $(APP_DIR)/application.pdf
 
@@ -83,4 +95,4 @@ watch:
 clean:
 	rm -rf $(BUILD_DIR)
 
-.PHONY: application cv feedback rebuild themes view watch clean
+.PHONY: application cv feedback rebuild themes rueckgrat view watch clean

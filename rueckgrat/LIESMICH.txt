@@ -1,0 +1,79 @@
+﻿BEWERBUNGSVORLAGE: LEBENSLAUF UND ANSCHREIBEN IN LATEX
+Beispiel «Max Mustermann». Alle Angaben im Beispiel sind erfunden.
+
+
+WAS IST DRIN
+
+  lebenslauf.tex      Lebenslauf: hier den eigenen Text eintragen
+  anschreiben.tex     Anschreiben: hier den eigenen Text eintragen
+  build.cmd           Starter: macht aus den .tex-Dateien die PDFs
+  build.ps1           das eigentliche Skript, wird von build.cmd aufgerufen
+  lebenslauf.pdf      so sieht das Beispiel fertig aus
+  anschreiben.pdf     so sieht das Beispiel fertig aus
+  rueckgrat.cls       das Layout (muss man normalerweise nicht anfassen)
+  fonts\              die Schrift JetBrains Mono (frei verwendbar, Lizenz in fonts\OFL.txt)
+  foto.jpg            Platzhalter für das Foto
+  unterschrift.png    Platzhalter für die Unterschrift
+
+Alle Dateien müssen zusammen im selben Ordner bleiben.
+
+
+WAS ES BRAUCHT
+
+Nur MiKTeX (https://miktex.org/download, Standardinstallation). Kein Perl, kein
+Python, kein latexmk, keine installierte Schrift.
+
+
+PDF ERZEUGEN
+
+Variante 1, am einfachsten:
+  Doppelklick auf build.cmd.
+  Oder in einem PowerShell-Fenster in diesem Ordner:
+  .\build.cmd
+  Nur ein Dokument:
+  .\build.cmd lebenslauf
+
+Variante 2, das Skript direkt:
+  powershell -ExecutionPolicy Bypass -File .\build.ps1
+  Ein blosses .\build.ps1 sperrt Windows in der Standardeinstellung.
+
+Variante 3, ohne Skript:
+  xelatex --enable-installer lebenslauf.tex
+  xelatex --enable-installer lebenslauf.tex
+  Zweimal, weil LaTeX die Seitenzahlen erst im zweiten Lauf kennt.
+  Für das Anschreiben dasselbe mit anschreiben.tex.
+
+Beim ersten Mal lädt MiKTeX fehlende Pakete aus dem Internet nach. Das dauert
+einige Minuten, danach geht es in Sekunden.
+
+
+EIGENE INHALTE EINTRAGEN
+
+- lebenslauf.tex und anschreiben.tex in einem Texteditor öffnen (TeXworks kommt
+  mit MiKTeX, der Windows-Editor geht auch) und die Beispieltexte überschreiben.
+  Zeilen, die mit % beginnen, sind Erklärungen und erscheinen nicht im PDF.
+- Foto: eigenes Bild im Hochformat 4:5 als foto.jpg in den Ordner legen.
+  Ohne Foto die Zeile \cvfield{foto}{foto.jpg} löschen. Schaut man auf dem Bild
+  von der Seite weg, lässt es sich spiegeln: Zeile \cvfield{fotospiegeln}{1}.
+- Unterschrift: Scan als unterschrift.png in den Ordner legen. Ohne Bild das
+  mittlere Argument leer lassen: \cvclosing{Freundliche Grüsse}{}{Max Mustermann}
+- Diese Zeichen brauchen einen Rückstrich davor:  \&  \%  \_  \#  \$
+- Die linke Spalte fasst etwa 22 Zeichen pro Zeile, die Titelzeile unter dem
+  Namen etwa 40. Eine längere E-Mail-Adresse vor dem @ umbrechen:
+  \cvfield{email}{\href{mailto:vorname.nachname@example.com}{vorname.nachname\newline @example.com}}
+- Das Anschreiben muss auf eine Seite passen.
+- Englische Fassung: in der Zeile \documentclass das «de» durch «en» ersetzen.
+- Für jede Bewerbung eine Kopie anlegen, etwa anschreiben_firma.tex.
+  build.ps1 baut alle .tex-Dateien im Ordner.
+
+
+WENN ES NICHT KLAPPT
+
+- «xelatex was not found»: MiKTeX installieren und danach ein neues
+  PowerShell-Fenster öffnen.
+- «... is open in another program»: das PDF im Viewer schliessen und nochmals bauen.
+- «... cannot be loaded because running scripts is disabled on this system»:
+  nicht build.ps1 direkt starten, sondern build.cmd (Variante 1).
+- Andere Fehler: Das Skript zeigt die Fehlerstelle mit Zeilennummer (l.45 heisst
+  Zeile 45). Meist fehlt eine schliessende Klammer } oder der Rückstrich vor
+  einem & oder %. Die ganze Meldung steht in der Datei mit der Endung .log.

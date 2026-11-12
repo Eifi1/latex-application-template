@@ -1,0 +1,118 @@
+% !TEX program = xelatex
+% ---------------------------------------------------------------------------
+% Lebenslauf (CV), example "Max Mustermann". All content is fictional.
+%
+% Build:  .\build.ps1   (or: run "xelatex lebenslauf.tex" twice)   see LIESMICH.txt
+% Needs:  rueckgrat.cls, fonts/, foto.jpg in the same folder.
+%
+% Special characters in your own text:  \&  \%  \_  \#  \$
+% Layout switches are the class options below; they are described at the top
+% of rueckgrat.cls. Remove "name25" for a long name, remove "schmal" if the
+% lines in the left column (about 22 characters each) get too long.
+% ---------------------------------------------------------------------------
+\documentclass[cv,de,rueckgrat,v2,schmal,duenn,ohnepfeil,rand15,ruhig,schluesselspalte,name25,kopftausch]{rueckgrat}
+
+% PDF metadata (shown in the PDF viewer under document properties)
+\hypersetup{pdftitle={Max Mustermann, Lebenslauf}, pdfauthor={Max Mustermann},
+  pdfsubject={Lebenslauf}, pdfkeywords={Projektleitung, Automation, Maschinenbau}}
+\cvdoclabel{Lebenslauf} % running head from page 2 on
+
+% --- header fields: delete a line to hide that field ---------------------------
+\cvfield{name}{Max Mustermann}
+% job title and degree: one line, about 40 characters at most
+\cvfield{titel}{Projektleiter Automation, Ingenieur FH}
+\cvfield{stichworte}{projektleitung · automation · konstruktion · lean}
+% \cvcomma{} becomes a line break in the narrow left column
+\cvfield{adresse}{Musterstrasse 1\cvcomma{}8000 Musterstadt}
+\cvfield{telefon}{+41 79 000 00 00}
+% \href{<link target>}{<visible text>}: change both parts. A long address needs a line break
+% before the @ in the visible text:  ...}{vorname.nachname\newline @example.com}}
+\cvfield{email}{\href{mailto:max@mustermann.example}{max@mustermann.example}}
+% up to three links, one per line; the last two share their baselines with
+% phone and e-mail on the left
+\cvfield{web}{\href{https://www.example.com}{mustermann.example}}
+\cvfield{github}{\href{https://github.com}{github.com/benutzername}}
+\cvfield{linkedin}{\href{https://www.linkedin.com}{linkedin.com/in/benutzername}}
+% birth date and nationality (with permit, if any) stand directly under the address
+\cvfield{geburtsdatumkurz}{geb. 01.01.1990}
+\cvfield{nationalitaetkurz}{Schweizer}
+% portrait, aspect ratio 4:5 (printed 32 x 40 mm); delete the line for a CV without photo
+\cvfield{foto}{foto.jpg}
+% remove the % in the next line to mirror the photo, so that you look towards the text
+% \cvfield{fotospiegeln}{1}
+
+\begin{document}
+\cvheader
+
+% ---- Profil -------------------------------------------------------------------
+% \cvsectionneed{3} before a short section: it needs less room to stay on the current page
+\cvsectionneed{3}
+\cvsection{Profil}
+\cvtext{Maschinenbauingenieur mit Schwerpunkt Automation. Seit 2019 leite ich bei der Beispiel AG Projekte von der Anforderung bis zur Inbetriebnahme und bringe dabei Konstruktion, Steuerungstechnik und Fertigung an einen Tisch. Ich arbeite strukturiert, dokumentiere nachvollziehbar und erkläre Technik so, dass auch Fachfremde damit entscheiden können.}
+
+% ---- Berufserfahrung ------------------------------------------------------------
+% \cventry[]{<title>}{<organisation, place, department>}{<dates>}
+% dates: "2019-04\newline \cvarrow\ heute" (range on two lines) or a single "2021-03"
+\cvsection{Berufserfahrung}
+\cventry[]{Projektleiter Automation}{Beispiel AG, Musterstadt, Anlagenbau}{2019-04\newline \cvarrow\ heute}
+\begin{cvbullets}
+  \item Leitung von Automatisierungsprojekten für Montageanlagen, von der Anforderung über die Ausschreibung bis zur Abnahme beim Kunden
+  \item Planung von Terminen, Kosten und Ressourcen, dazu regelmässige Berichte an Auftraggeber und Geschäftsleitung
+  \item Abstimmung zwischen Konstruktion, Steuerungstechnik, Einkauf und Fertigung, Moderation der technischen Reviews
+  \item Einheitliche Vorlagen für Lastenhefte und Abnahmeprotokolle eingeführt, die heute in allen Projekten der Abteilung verwendet werden
+  \item Risikobeurteilungen nach Maschinenrichtlinie zusammen mit der Sicherheitsfachstelle
+  \item Betreuung von Lernenden und Einarbeitung neuer Mitarbeitender im Team
+\end{cvbullets}
+\cventry[]{Konstrukteur}{Muster Technik GmbH, Beispielhausen, Sondermaschinenbau}{2014-09\newline \cvarrow\ 2019-03}
+\begin{cvbullets}
+  \item Konstruktion von Vorrichtungen und Baugruppen im 3D-CAD, inklusive Zeichnungen und Stücklisten
+  \item Auslegung von Antrieben und pneumatischen Komponenten in Absprache mit den Lieferanten
+  \item Begleitung der Inbetriebnahme beim Kunden und Übergabe an den Service
+\end{cvbullets}
+
+% ---- Kenntnisse, Sprachen -------------------------------------------------------
+% \cvrow[]{<short key, left column>}{<text>}
+\cvsection{Kenntnisse}
+\cvrow[]{methoden}{Projektmanagement klassisch und agil, Lean, FMEA, Risikobeurteilung}
+\cvrow[]{technik}{Automation, SPS-Programmierung, Pneumatik, Sensorik, Robotik}
+\cvrow[]{software}{3D-CAD, ERP, MS Project, Excel, Python (Grundlagen)}
+\cvrow[]{normen}{Maschinenrichtlinie, CE-Konformität, ISO 9001}
+\cvrow[]{deutsch}{Muttersprache}
+\cvrow[]{englisch}{Verhandlungssicher (C1)}
+\cvrow[]{französisch}{Gute Kenntnisse (B1)}
+
+% ---- Projekte -------------------------------------------------------------------
+% \cvproject[]{<name>}{<link text>}{<link target>}{<dates>}; leave both link parts empty for no link
+\cvsection{Projekte}
+\cvproject[]{Werkstatt-Planer}{example.com/werkstatt}{https://www.example.com}{2023-01\newline \cvarrow\ heute}
+\cvtext{Kleine Web-Anwendung für die offene Werkstatt des Quartiervereins: Mitglieder reservieren Maschinen und sehen, wer eine Einführung geben kann. Idee, Umsetzung und Betrieb in der Freizeit.}
+\cvtags{stack: Python, Flask, SQLite}
+\cvproject[]{Lastenvelo-Anhänger}{}{}{2021-05\newline \cvarrow\ 2021-10}
+\cvtext{Anhänger mit Auflaufbremse für das Lastenvelo der Nachbarschaft konstruiert und gebaut, mit Stückliste und Bauanleitung zum Nachbauen.}
+
+% ---- Ausbildung -----------------------------------------------------------------
+\cvsection{Ausbildung}
+\cventry[]{Bachelor of Science in Maschinentechnik}{Fachhochschule Musterstadt}{2011-09\newline \cvarrow\ 2014-08}
+\begin{cvbullets}
+  \item Bachelorarbeit: «Auslegung einer flexiblen Montagezelle für Kleinserien»
+  \item Vertiefung Automation und Produktionstechnik
+\end{cvbullets}
+\cventry[]{Berufsmaturität, technische Richtung}{Berufsfachschule Beispielhausen}{2010-08\newline \cvarrow\ 2011-07}
+\cventry[]{Lehre als Polymechaniker EFZ}{Muster Technik GmbH, Beispielhausen}{2006-08\newline \cvarrow\ 2010-07}
+
+% ---- Weiterbildung --------------------------------------------------------------
+\cvsection{Weiterbildung}
+\cventry[]{Zertifikat Projektmanagement}{Beispiel Akademie, Musterstadt}{2021-03}
+\cventry[]{Kurs Maschinensicherheit und CE-Kennzeichnung}{Verband Muster, Beispielhausen}{2019-11}
+
+% ---- Interessen -----------------------------------------------------------------
+\cvsection{Interessen}
+\cvrow[]{sport}{Velofahren, Skitouren}
+\cvrow[]{verein}{Vorstandsmitglied im Turnverein Musterstadt}
+\cvrow[]{werkstatt}{Holzarbeiten und 3D-Druck}
+
+% ---- Referenzen -----------------------------------------------------------------
+\cvsectionneed{3}
+\cvsection{Referenzen}
+\cvrow[]{auf anfrage}{Vorgesetzte bei der Beispiel AG und der Muster Technik GmbH}
+\end{document}

@@ -1,0 +1,55 @@
+% !TEX program = xelatex
+% ---------------------------------------------------------------------------
+% Anschreiben (cover letter), example "Max Mustermann". All content is fictional.
+%
+% Build:  .\build.ps1   (or: run "xelatex anschreiben.tex" twice)   see LIESMICH.txt
+% Needs:  rueckgrat.cls, fonts/, unterschrift.png in the same folder.
+%
+% The letter must fit on one page: about four short paragraphs.
+% Special characters in your own text:  \&  \%  \_  \#  \$
+% Option "ohnefenster" is for sending the letter as a PDF. For a window envelope
+% (address field on the right) remove it and shorten the text a little.
+% ---------------------------------------------------------------------------
+\documentclass[brief,de,rueckgrat,v2,schmal,duenn,ohnepfeil,rand15,ruhig,schluesselspalte,name25,briefkopf,betreffrubrik,beilagengruss,ohnefenster,luft]{rueckgrat}
+
+% PDF metadata
+\hypersetup{pdftitle={Max Mustermann, Anschreiben}, pdfauthor={Max Mustermann},
+  pdfsubject={Bewerbung als Projektleiter Automation}}
+
+% --- header fields: same values as in lebenslauf.tex ----------------------------
+\cvfield{name}{Max Mustermann}
+\cvfield{titel}{Projektleiter Automation, Ingenieur FH}
+\cvfield{adresse}{Musterstrasse 1\cvcomma{}8000 Musterstadt}
+\cvfield{telefon}{+41 79 000 00 00}
+\cvfield{email}{\href{mailto:max@mustermann.example}{max@mustermann.example}}
+
+\begin{document}
+\cvletterhead
+
+% \cvrecipient{<sender line, printed only above a window address>}{<recipient, lines separated by \\>}
+\cvrecipient{Max Mustermann, Musterstrasse 1, 8000 Musterstadt}{Vorbild Maschinenbau AG\\Frau Erika Musterfrau\\Personalabteilung\\Beispielweg 10\\8001 Beispielstadt}
+\cvletterbody
+
+% place and date (shown in the left column under "Bewerbung"); \today prints the current date
+\cvplacedate{Musterstadt\cvcomma{}12. November 2026}
+% subject: the position you apply for
+\cvsubject{Projektleiter Automation}
+
+\begin{cvletter}
+Sehr geehrte Frau Musterfrau
+
+Ihre Ausschreibung für die Projektleitung Automation hat mich angesprochen, weil sie die Verbindung beschreibt, die mir an meiner Arbeit wichtig ist: technische Tiefe und die Verantwortung dafür, dass eine Anlage termingerecht beim Kunden läuft.
+
+Seit 2019 leite ich bei der Beispiel AG Automatisierungsprojekte für Montageanlagen, von der Anforderung bis zur Abnahme. Davor habe ich als Konstrukteur Vorrichtungen und Baugruppen entwickelt und bei Kunden in Betrieb genommen. Aus dieser Zeit weiss ich, wo ein Konzept in der Werkstatt an Grenzen stösst, und plane entsprechend.
+
+In Projekten ist mir wichtig, dass alle Beteiligten früh dasselbe Bild haben. Dafür habe ich einheitliche Vorlagen für Lastenhefte und Abnahmen eingeführt und moderiere die technischen Reviews zwischen Konstruktion, Steuerungstechnik und Fertigung. Dass Sie Ihre Anlagen modular aufbauen und Ihre Kunden über den ganzen Lebenszyklus begleiten, passt gut zu dieser Arbeitsweise.
+
+Gern zeige ich Ihnen in einem Gespräch, wie ich Projekte führe und was ich in Ihr Team einbringen kann. Ich freue mich auf Ihre Einladung.
+
+\end{cvletter}
+
+% \cvclosing{<closing>}{<signature image, or empty for a handwritten signature>}{<name>}
+\cvclosing{Freundliche Grüsse}{unterschrift.png}{Max Mustermann}
+% enclosures, separated by \cvlistsep{}
+\cvenclosures{Beilagen}{Lebenslauf\cvlistsep{}Arbeitszeugnisse\cvlistsep{}Diplome}
+\end{document}

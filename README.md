@@ -14,6 +14,15 @@ Alle Inhalte sind Blindtext der fiktiven Person „Max Muster“. Sie werden dur
 
 Fertig gebaute Beispiele liegen in [`vorschau/`](vorschau/) — dasselbe Blindtext-Dossier in jedem Layout. Mit `make themes` entsteht das eigene Dossier in allen drei Layouts unter `build/theme-*.pdf` zum Vergleichen.
 
+## Zweite Vorlage: `rueckgrat`
+
+Im Ordner [`rueckgrat/`](rueckgrat/) liegt eine eigenständige zweite Vorlage, unabhängig von den drei Layouts oben: Lebenslauf und Anschreiben mit einer eigenen Dokumentklasse (`rueckgrat.cls`), gesetzt in JetBrains Mono, mit einer senkrechten Linie als Rückgrat und der Datumsspalte links davon. Auch hier sind alle Inhalte Blindtext («Max Mustermann»).
+
+- Beispiele: [`rueckgrat/lebenslauf.pdf`](rueckgrat/lebenslauf.pdf), [`rueckgrat/anschreiben.pdf`](rueckgrat/anschreiben.pdf)
+- Anleitung: [`rueckgrat/LIESMICH.txt`](rueckgrat/LIESMICH.txt)
+- Bauen unter Linux oder macOS: `make rueckgrat`. Unter Windows mit MiKTeX: Doppelklick auf `rueckgrat/build.cmd`.
+- Der Ordner ist in sich vollständig (Klasse, Schrift, Platzhalter für Foto und Unterschrift) und lässt sich einzeln kopieren.
+
 ## Struktur
 
 ```
